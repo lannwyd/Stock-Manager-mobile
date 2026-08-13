@@ -15,10 +15,8 @@ const WareHouses: warehouse[] = [
 ];
 
 const sections = [
-  { title: 'Cold Storage', key: 'sec1', itemCount: 24 },
-  { title: 'Dry Goods', key: 'sec2', itemCount: 58 },
-  { title: 'Packaging', key: 'sec3', itemCount: 12 },
-  { title: 'Returns', key: 'sec4', itemCount: 6 },
+  { title: 'pharmacie', key: 'sec1', itemCount: 24 },
+  { title: 'maison', key: 'sec2', itemCount: 58 },
 ];
 
 const recentItems = [
@@ -30,22 +28,23 @@ const recentItems = [
 const PREVIEW_LIMIT = 3;
 
 export default function Index() {
-  const [search ,setsearch] = useState("")
+  const [search, setsearch] = useState('');
+
   return (
     <SafeAreaView className="flex-1 bg-indigo-50">
       <ScrollView contentContainerClassName="w-full p-4 gap-4">
         <DropdownComponent options={WareHouses} />
         <View className="flex-row items-center bg-white w-full h-14 rounded-xl border border-slate-400 px-3">
           <Search size={20} color="#64748b" />
-        <TextInput
-          className="flex-1 ml-2 h-full text-base text-slate-800"
-          placeholder="Search languages..."
-          placeholderTextColor="#888"
-          value={search}
-          //onChangeText={setSearch}
-          autoCorrect={false}
-          clearButtonMode="while-editing"
-        />
+          <TextInput
+            className="flex-1 ml-2 h-full text-base text-slate-800"
+            placeholder="Search languages..."
+            placeholderTextColor="#888"
+            value={search}
+            onChangeText={setsearch}
+            autoCorrect={false}
+            clearButtonMode="while-editing"
+          />
         </View>
         <View className="flex-row gap-4">
           <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
@@ -60,18 +59,15 @@ export default function Index() {
           </View>
         </View>
 
-        <View className="bg-white rounded-xl border border-slate-200">
-          <View className="flex-row items-center justify-between p-4">
+        <View className="bg-white rounded-xl border border-slate-200 h-64">
+          <View className="p-4">
             <Text className="font-semibold text-lg">Sections</Text>
-            <Pressable className="flex-row items-center">
-              <Text className="text-indigo-700 font-medium mr-1">View all</Text>
-              <ChevronRight size={16} color="#4338ca" />
-            </Pressable>
           </View>
           <FlatList
-            data={sections.slice(0, PREVIEW_LIMIT)}
+            className="flex-1"
+            data={sections}
             keyExtractor={(item) => item.key}
-            scrollEnabled={false}
+            nestedScrollEnabled={true}
             ItemSeparatorComponent={() => <View className="h-px bg-slate-100" />}
             renderItem={({ item }) => (
               <Pressable className="flex-row items-center justify-between px-4 py-3">
@@ -91,7 +87,7 @@ export default function Index() {
             </Pressable>
           </View>
           <FlatList
-            data={recentItems}
+            data={recentItems.slice(0, PREVIEW_LIMIT)}
             keyExtractor={(item) => item.key}
             scrollEnabled={false}
             ItemSeparatorComponent={() => <View className="h-px bg-slate-100" />}
