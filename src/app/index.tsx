@@ -1,4 +1,5 @@
 import DropdownComponent from '@/components/shared/dropdowncomp';
+import { Link } from 'expo-router';
 import { ChevronRight, Dot, Layers, Package, Search } from 'lucide-react-native';
 import { useState } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
@@ -71,7 +72,11 @@ export default function Index() {
               <View className="flex-row items-center justify-between">
                 <Text className="font-semibold text-lg">Sections</Text>
                 <Pressable className="flex-row items-center">
-                  <Text className="text-indigo-700 font-medium mr-1">View all</Text>
+                  <Link href={"/sections"} asChild>
+                    <Text className="text-indigo-700 font-medium mr-1">
+                      View all
+                    </Text>
+                  </Link>
                   <ChevronRight size={16} color="#4338ca" />
                 </Pressable>
               </View>
@@ -99,12 +104,12 @@ export default function Index() {
                   </Pressable>
                 ))}
                 {sections.length > 2 ?
-                 <View className="w-full flex flex-row items-center justify-center">
-                  <Dot size={15} />
-                  <Dot size={15} />
-                  <Dot size={15} />
-                </View> : ""}
-                
+                  <View className="w-full flex flex-row items-center justify-center">
+                    <Dot size={15} />
+                    <Dot size={15} />
+                    <Dot size={15} />
+                  </View> : ""}
+
               </View>
             </View>
 
