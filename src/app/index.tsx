@@ -58,7 +58,7 @@ export default function Index() {
             <View className="flex-row gap-4">
               <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
                 <Package size={20} color="#4338ca" />
-                <Text className="text-2xl font-bold mt-2">146</Text>
+                <Text className="text-2xl font-bold mt-2">total number of types</Text>
                 <Text className="text-slate-500 text-sm">Total items</Text>
               </View>
               <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
@@ -71,45 +71,47 @@ export default function Index() {
             <View className="bg-white rounded-xl border border-slate-200 p-4 gap-3">
               <View className="flex-row items-center justify-between">
                 <Text className="font-semibold text-lg">Sections</Text>
-                <Pressable className="flex-row items-center">
-                  <Link href={"/sections"} asChild>
+                <Link href="/sections" asChild>
+                  <Pressable className="flex-row items-center">
                     <Text className="text-indigo-700 font-medium mr-1">
                       View all
                     </Text>
-                  </Link>
-                  <ChevronRight size={16} color="#4338ca" />
-                </Pressable>
+                    <ChevronRight size={16} color="#4338ca" />
+                  </Pressable>
+                </Link>
               </View>
 
               <View className="gap-3">
                 {sections.slice(0, 2).map((item) => (
-                  <Pressable
-                    key={item.key}
-                    className={`flex flex-row items-start rounded-xl justify-between px-4 py-3 ${item.color}`}
-                  >
-                    <View className="w-[90%] flex flex-row justify-between items-center gap-2">
-                      <View className="flex flex-col ">
-                        <Text className="text-lg font-medium">{item.title}</Text>
-                        <Text className="text-sm text-slate-500">Click for more info</Text>
-                      </View>
+                  <Link key={item.key} href={`/sections/${item.key}`} asChild>
+                    <Pressable
+                      className={`flex flex-row items-start rounded-xl justify-between px-4 py-5 ${item.color}`}
+                    >
+                      <View className="w-[90%] flex flex-row justify-between items-center gap-2">
+                        <View className="flex flex-col">
+                          <Text className="text-lg font-medium">{item.title}</Text>
+                          <Text className="text-sm text-slate-500">Click for more info</Text>
+                        </View>
 
-                      <View className="flex h-full flex-row items-center">
-                        <Dot size={34} color="#64748b" />
-                        <Text className=" text-slate-600">{item.itemCount} items</Text>
+                        <View className="flex h-full flex-row items-center">
+                          <Dot size={34} color="#64748b" />
+                          <Text className="text-slate-600">{item.itemCount} items</Text>
+                        </View>
                       </View>
-                    </View>
-                    <View className="w-[10%] h-full flex flex-row justify-end items-center">
-                      <ChevronRight size={26} color="#4338ca" />
-                    </View>
-                  </Pressable>
+                      <View className="w-[10%] h-full flex flex-row justify-end items-center">
+                        <ChevronRight size={26} color="#4338ca" />
+                      </View>
+                    </Pressable>
+                  </Link>
                 ))}
-                {sections.length > 2 ?
+
+                {sections.length > 2 ? (
                   <View className="w-full flex flex-row items-center justify-center">
                     <Dot size={15} />
                     <Dot size={15} />
                     <Dot size={15} />
-                  </View> : ""}
-
+                  </View>
+                ) : null}
               </View>
             </View>
 

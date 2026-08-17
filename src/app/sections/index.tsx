@@ -2,7 +2,7 @@ import { Link } from 'expo-router';
 import { ChevronRight, Dot, Layers, Package } from 'lucide-react-native';
 import { FlatList, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { section } from './[sectionId]';
+
 
 type Floor = {
   key: string;
@@ -63,9 +63,8 @@ const sections: Section[] = [
       { key: 'sec4-floor3', title: 'Floor 3', itemCount: 18 },
     ],
   }
-
-
 ];
+
 export default function Index() {
   return (
     <SafeAreaView className="flex-1 bg-indigo-50">
