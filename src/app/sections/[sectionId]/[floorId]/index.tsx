@@ -76,7 +76,7 @@ export default function FloorDetail() {
           </View>
         }
         renderItem={({ item }) => (
-          <Link href={`/sections/${sectionId}/floors/${floorId}/products/${item.key}`} asChild>
+          <Link href={`/sections/${sectionId}/${floorId}/${item.key}`} asChild>
             <Pressable className="flex-row items-center justify-between bg-white rounded-xl border border-slate-200 px-4 py-4">
               <View>
                 <Text className="text-base font-medium">{item.name}</Text>
