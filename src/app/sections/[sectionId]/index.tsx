@@ -45,7 +45,7 @@ export default function SectionDetail() {
           </View>
         }
         renderItem={({ item }) => (
-          <Link href={`/sections/${sectionId}/floors/${item.key}`} asChild>
+          <Link href={`/sections/${sectionId}/${item.key}`} asChild>
             <Pressable className="flex flex-row items-start rounded-xl justify-between px-4 py-5 bg-white">
               <View className="w-[90%] flex flex-row justify-between items-center gap-2">
                 <View className="flex flex-col">
