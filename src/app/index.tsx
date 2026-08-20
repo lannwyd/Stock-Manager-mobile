@@ -7,33 +7,45 @@ import { useState } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-
 export default function Home() {
   const { warehouses, loading: warehousesLoading, error: warehousesError } = useWarehouseContext();
   const { historyItems, loading: historyLoading, error: historyError } = useHistory();
-
 
   const [search, setsearch] = useState('');
   const [selectedWarehouseId, setSelectedWarehouseId] = useState<string | null>(null);
 
   if (warehousesLoading || historyLoading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>Loading...</Text></SafeAreaView>;
   if (warehousesError || historyError) return <SafeAreaView className="flex-1 items-center justify-center"><Text>Error loading data</Text></SafeAreaView>;
+
   const selectedWarehouse =
     warehouses.find((w) => w.id === selectedWarehouseId) ??
     warehouses.find((w) => w.name === 'Pharmacie') ??
     warehouses[0];
+
   const dropdownOptions = warehouses.map((w) => ({ label: w.name, value: w.id }));
   const sections = selectedWarehouse?.sections ?? [];
-  const totalProducts = sections.reduce((sum, s) => sum + s.totalProducts, 0);
+
+  // Calculate total products by accumulating quantities from floors -> stock_batches
+  const totalProducts = sections.reduce((sum, section) => {
+    return sum + (section.floors ?? []).reduce((fSum, floor) => {
+      return fSum + (floor.stock_batches ?? []).reduce((bSum, batch) => bSum + (batch.quantity ?? 0), 0);
+    }, 0);
+  }, 0);
+
   return (
     <SafeAreaView className="flex-1 bg-indigo-50">
       <FlatList
         data={historyItems}
-        keyExtractor={(item) => item.key}
+        keyExtractor={(item) => item.id}
         contentContainerClassName="p-4 gap-4"
         ListHeaderComponent={
           <View className="gap-4">
-            <DropdownComponent options={dropdownOptions} />
+            {/* Assuming DropdownComponent needs these props added to handle state */}
+            <DropdownComponent
+              options={dropdownOptions}
+            // value={selectedWarehouse?.id} 
+            // onChange={setSelectedWarehouseId} 
+            />
 
             <View className="flex-row items-center bg-white w-full h-14 rounded-xl border border-slate-400 px-3">
               <Search size={20} color="#64748b" />
@@ -73,27 +85,34 @@ export default function Home() {
               </View>
 
               <View className="gap-3">
-                {sections.slice(0, 2).map((item) => (
-                  <Link key={item.key} href={`/sections/${item.key}`} asChild>
-                    <Pressable
-                      className={`flex flex-row items-start rounded-xl justify-between px-4 py-5 ${item.color}`}
-                    >
-                      <View className="w-[90%] flex flex-row justify-between items-center gap-2">
-                        <View className="flex flex-col">
-                          <Text className="text-lg font-medium">{item.title}</Text>
-                          <Text className="text-sm text-slate-500">Click for more info</Text>
+                {sections.slice(0, 2).map((item) => {
+                  // Calculate total items per specific section
+                  const sectionTotal = (item.floors ?? []).reduce((fSum, floor) => {
+                    return fSum + (floor.stock_batches ?? []).reduce((bSum, batch) => bSum + (batch.quantity ?? 0), 0);
+                  }, 0);
+
+                  return (
+                    <Link key={item.id} href={`/sections/${item.id}`} asChild>
+                      <Pressable
+                        className={`flex flex-row items-start rounded-xl justify-between px-4 py-5 ${item.color ?? 'bg-slate-100'}`}
+                      >
+                        <View className="w-[90%] flex flex-row justify-between items-center gap-2">
+                          <View className="flex flex-col">
+                            <Text className="text-lg font-medium">{item.name}</Text>
+                            <Text className="text-sm text-slate-500">Click for more info</Text>
+                          </View>
+                          <View className="flex h-full flex-row items-center">
+                            <Dot size={34} color="#64748b" />
+                            <Text className="text-slate-600">{sectionTotal} items</Text>
+                          </View>
                         </View>
-                        <View className="flex h-full flex-row items-center">
-                          <Dot size={34} color="#64748b" />
-                          <Text className="text-slate-600">{item.totalItems} items</Text>
+                        <View className="w-[10%] h-full flex flex-row justify-end items-center">
+                          <ChevronRight size={26} color="#4338ca" />
                         </View>
-                      </View>
-                      <View className="w-[10%] h-full flex flex-row justify-end items-center">
-                        <ChevronRight size={26} color="#4338ca" />
-                      </View>
-                    </Pressable>
-                  </Link>
-                ))}
+                      </Pressable>
+                    </Link>
+                  );
+                })}
 
                 {sections.length > 2 ? (
                   <View className="w-full flex flex-row items-center justify-center">
@@ -116,9 +135,11 @@ export default function Home() {
         }
         renderItem={({ item }) => (
           <View className="bg-white px-4 py-3 rounded-xl border border-slate-200">
-            <Text className="text-base font-medium">{item.productName}</Text>
+            <Text className="text-base font-medium">
+              {item.stock_batches?.products?.name ?? 'Unknown Product'}
+            </Text>
             <Text className="text-slate-400 text-sm">
-              {item.fromWarehouse} → {item.toWarehouse} · {item.quantity} units · {item.date}
+              {item.from_warehouse?.name ?? 'N/A'} → {item.to_warehouse?.name ?? 'N/A'} · {item.quantity} units · {new Date(item.created_at).toLocaleDateString()}
             </Text>
           </View>
         )}
