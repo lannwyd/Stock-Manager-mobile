@@ -28,7 +28,7 @@ type Section = {
 };
 
 type Warehouse = {
-    key: string;
+    id: string;
     name: string;
     sections: Section[];
 };
@@ -168,12 +168,12 @@ const historyItems: HistoryItem[] = [
 
 export const WareHouses: Warehouse[] = [
     {
-        key: 'pharmacie',
+        id: 'pharmacie',
         name: 'Pharmacie',
         sections: [orangeRack, yellowRack],
     },
     {
-        key: 'maison',
+        id: 'maison',
         name: 'Maison',
         sections: [], 
     },

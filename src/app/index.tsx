@@ -1,21 +1,30 @@
 import DropdownComponent from '@/components/shared/dropdowncomp';
+import { useWarehouseContext } from '@/context/warehouseContext';
+import { useHistory } from '@/hooks/useHistory';
 import { Link } from 'expo-router';
 import { ChevronRight, Dot, Layers, Package, Search } from 'lucide-react-native';
 import { useState } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { WareHouses, historyItems } from '@/lib/data';
 
-const dropdownOptions = WareHouses.map((w) => ({ label: w.name, value: w.key }));
 
 export default function Home() {
+  const { warehouses, loading: warehousesLoading, error: warehousesError } = useWarehouseContext();
+  const { historyItems, loading: historyLoading, error: historyError } = useHistory();
+
+
   const [search, setsearch] = useState('');
-  const [selectedWarehouseKey, setSelectedWarehouseKey] = useState('pharmacie');
+  const [selectedWarehouseId, setSelectedWarehouseId] = useState<string | null>(null);
 
-  const selectedWarehouse = WareHouses.find((w) => w.key === selectedWarehouseKey)!;
-  const sections = selectedWarehouse.sections;
+  if (warehousesLoading || historyLoading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>Loading...</Text></SafeAreaView>;
+  if (warehousesError || historyError) return <SafeAreaView className="flex-1 items-center justify-center"><Text>Error loading data</Text></SafeAreaView>;
+  const selectedWarehouse =
+    warehouses.find((w) => w.id === selectedWarehouseId) ??
+    warehouses.find((w) => w.name === 'Pharmacie') ??
+    warehouses[0];
+  const dropdownOptions = warehouses.map((w) => ({ label: w.name, value: w.id }));
+  const sections = selectedWarehouse?.sections ?? [];
   const totalProducts = sections.reduce((sum, s) => sum + s.totalProducts, 0);
-
   return (
     <SafeAreaView className="flex-1 bg-indigo-50">
       <FlatList
