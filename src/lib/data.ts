@@ -27,24 +27,10 @@ type Section = {
     totalProducts: number; 
 };
 
-type Warehouse = {
-    id: string;
-    name: string;
-    sections: Section[];
-};
 
 
-type HistoryItem = {
-    key: string;
-    productName: string;
-    dci: string;
-    lot: string;
-    quantity: number;
-    fromWarehouse: string; 
-    toWarehouse: string;  
-    date: string;          
-    note?: string;
-};
+
+
 
 const orangeFloor1: Floor = {
     key: 'sec1-floor1',
@@ -129,57 +115,3 @@ const yellowRack: Section = {
     totalItems: yellowFloor1.totalItems + yellowFloor2.totalItems + yellowFloor3.totalItems,
     totalProducts: yellowFloor1.totalProducts + yellowFloor2.totalProducts + yellowFloor3.totalProducts,
 };
-
-
-const historyItems: HistoryItem[] = [
-    {
-        key: 'hist1',
-        productName: 'Paralgan',
-        dci: 'Paracetamol',
-        lot: 'LOT-24A7X9',
-        quantity: 20,
-        fromWarehouse: 'pharmacie',
-        toWarehouse: 'maison',
-        date: '2026-08-14',
-    },
-    {
-        key: 'hist2',
-        productName: 'Augmentin',
-        dci: 'Amoxicillin/Clavulanate',
-        lot: 'LOT-24G6R3',
-        quantity: 15,
-        fromWarehouse: 'maison',
-        toWarehouse: 'pharmacie',
-        date: '2026-08-15',
-    },
-    {
-        key: 'hist3',
-        productName: 'Ventoline',
-        dci: 'Salbutamol',
-        lot: 'LOT-24F1Q8',
-        quantity: 10,
-        fromWarehouse: 'pharmacie',
-        toWarehouse: 'maison',
-        date: '2026-08-17',
-        note: 'Urgent transfer — low stock at Maison',
-    },
-];
-
-
-export const WareHouses: Warehouse[] = [
-    {
-        id: 'pharmacie',
-        name: 'Pharmacie',
-        sections: [orangeRack, yellowRack],
-    },
-    {
-        id: 'maison',
-        name: 'Maison',
-        sections: [], 
-    },
-    
-];
-export { historyItems };
-
-
-export type { Warehouse, Section, Floor, Product, HistoryItem };

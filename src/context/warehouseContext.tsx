@@ -1,4 +1,4 @@
-import type { Warehouse } from '@/lib/data'; 
+import type { Warehouse } from '@/types/types.ts'; 
 import { supabase } from '@/lib/supabase';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 

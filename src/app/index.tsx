@@ -11,6 +11,7 @@ export default function Home() {
   const { warehouses, loading: warehousesLoading, error: warehousesError } = useWarehouseContext();
   const { historyItems, loading: historyLoading, error: historyError } = useHistory();
 
+  
   const [search, setsearch] = useState('');
   const [selectedWarehouseId, setSelectedWarehouseId] = useState<string | null>(null);
 
@@ -25,7 +26,6 @@ export default function Home() {
   const dropdownOptions = warehouses.map((w) => ({ label: w.name, value: w.id }));
   const sections = selectedWarehouse?.sections ?? [];
 
-  // Calculate total products by accumulating quantities from floors -> stock_batches
   const totalProducts = sections.reduce((sum, section) => {
     return sum + (section.floors ?? []).reduce((fSum, floor) => {
       return fSum + (floor.stock_batches ?? []).reduce((bSum, batch) => bSum + (batch.quantity ?? 0), 0);
@@ -40,11 +40,10 @@ export default function Home() {
         contentContainerClassName="p-4 gap-4"
         ListHeaderComponent={
           <View className="gap-4">
-            {/* Assuming DropdownComponent needs these props added to handle state */}
             <DropdownComponent
               options={dropdownOptions}
-            // value={selectedWarehouse?.id} 
-            // onChange={setSelectedWarehouseId} 
+              value={selectedWarehouse?.id}
+              onChange={(value: any) => setSelectedWarehouseId(value)}
             />
 
             <View className="flex-row items-center bg-white w-full h-14 rounded-xl border border-slate-400 px-3">
@@ -86,7 +85,6 @@ export default function Home() {
 
               <View className="gap-3">
                 {sections.slice(0, 2).map((item) => {
-                  // Calculate total items per specific section
                   const sectionTotal = (item.floors ?? []).reduce((fSum, floor) => {
                     return fSum + (floor.stock_batches ?? []).reduce((bSum, batch) => bSum + (batch.quantity ?? 0), 0);
                   }, 0);
