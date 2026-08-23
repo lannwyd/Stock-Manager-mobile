@@ -1,12 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { Entypo } from '@expo/vector-icons';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
-const DropdownComponent = ({ options }: any) => {
-    const [value, setValue] = useState("pharmacie")
-    const [isFocus, setIsFocus] = useState(false);
+type DropdownItem = { label: string; value: string };
+
+type Props = {
+    options: DropdownItem[];
+    value?: string;
+    onChange: (value: string) => void;
+};
+
+const DropdownComponent = ({ options, value, onChange }: Props) => {
+    const [isFocus, setIsFocus] = React.useState(false);
 
     const rotation = useSharedValue(0);
 
@@ -14,15 +21,12 @@ const DropdownComponent = ({ options }: any) => {
         rotation.value = withTiming(isFocus ? 180 : 0, { duration: 250 });
     }, [isFocus]);
 
-    const animatedIconStyle = useAnimatedStyle(() => {
-        return {
-            transform: [{ rotate: `${rotation.value}deg` }],
-        };
-    });
+    const animatedIconStyle = useAnimatedStyle(() => ({
+        transform: [{ rotate: `${rotation.value}deg` }],
+    }));
 
     return (
         <Dropdown
-        
             style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
             placeholderStyle={styles.placeholderStyle}
             selectedTextStyle={styles.selectedTextStyle}
@@ -36,17 +40,13 @@ const DropdownComponent = ({ options }: any) => {
             onFocus={() => setIsFocus(true)}
             onBlur={() => setIsFocus(false)}
             onChange={(item) => {
-                setValue(item.value);
+                onChange(item.value);
                 setIsFocus(false);
             }}
             renderRightIcon={() => null}
             renderLeftIcon={() => (
                 <Animated.View style={[styles.icon, animatedIconStyle]}>
-                    <Entypo
-                        color={isFocus ? 'blue' : 'black'}
-                        name="chevron-up" 
-                        size={20}
-                    />
+                    <Entypo color={isFocus ? 'blue' : 'black'} name="chevron-up" size={20} />
                 </Animated.View>
             )}
         />
@@ -56,24 +56,9 @@ const DropdownComponent = ({ options }: any) => {
 export default DropdownComponent;
 
 const styles = StyleSheet.create({
-    dropdown: {
-        width:'100%',
-        height: 50,
-    },
-    icon: {
-        marginRight: 5,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    placeholderStyle: {
-        fontSize: 16,
-    },
-    selectedTextStyle: {
-        fontSize: 16,
-    },
-    iconStyle: {
-        width : 26,
-        height : 26
-    },
-
+    dropdown: { height: 50, paddingHorizontal: 8 },
+    icon: { marginRight: 5, justifyContent: 'center', alignItems: 'center' },
+    placeholderStyle: { fontSize: 16 },
+    selectedTextStyle: { fontSize: 16 },
+    iconStyle: { width: 26, height: 26 },
 });

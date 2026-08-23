@@ -1,4 +1,4 @@
-import type { Warehouse } from '@/types/types.ts'; 
+import type { Warehouse } from '@/types/types.ts';
 import { supabase } from '@/lib/supabase';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
@@ -7,6 +7,9 @@ type WarehouseContextType = {
     loading: boolean;
     error: string | null;
     refresh: () => Promise<void>;
+    selectedWarehouseId: string | null;
+    setSelectedWarehouseId: (id: string) => void;
+    selectedWarehouse: Warehouse | undefined;
 };
 
 const WarehouseContext = createContext<WarehouseContextType | undefined>(undefined);
@@ -15,6 +18,7 @@ export function WarehouseProvider({ children }: { children: React.ReactNode }) {
     const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [selectedWarehouseId, setSelectedWarehouseId] = useState<string | null>(null);
 
     const fetchData = useCallback(async () => {
         setLoading(true);
@@ -55,8 +59,23 @@ export function WarehouseProvider({ children }: { children: React.ReactNode }) {
         fetchData();
     }, [fetchData]);
 
+    const selectedWarehouse =
+        warehouses.find((w) => w.id === selectedWarehouseId) ??
+        warehouses.find((w) => w.name === 'Pharmacie') ??
+        warehouses[0];
+
     return (
-        <WarehouseContext.Provider value={{ warehouses, loading, error, refresh: fetchData }}>
+        <WarehouseContext.Provider
+            value={{
+                warehouses,
+                loading,
+                error,
+                refresh: fetchData,
+                selectedWarehouseId,
+                setSelectedWarehouseId,
+                selectedWarehouse,
+            }}
+        >
             {children}
         </WarehouseContext.Provider>
     );
@@ -64,6 +83,6 @@ export function WarehouseProvider({ children }: { children: React.ReactNode }) {
 
 export function useWarehouseContext() {
     const ctx = useContext(WarehouseContext);
-    if (!ctx) throw new Error('useWarehouses must be used within a WarehouseProvider');
+    if (!ctx) throw new Error('useWarehouseContext must be used within a WarehouseProvider');
     return ctx;
 }

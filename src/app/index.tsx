@@ -8,20 +8,15 @@ import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Home() {
-  const { warehouses, loading: warehousesLoading, error: warehousesError } = useWarehouseContext();
+  const { warehouses, loading: warehousesLoading, error: warehousesError, selectedWarehouseId, setSelectedWarehouseId, selectedWarehouse } = useWarehouseContext();
   const { historyItems, loading: historyLoading, error: historyError } = useHistory();
 
   
   const [search, setsearch] = useState('');
-  const [selectedWarehouseId, setSelectedWarehouseId] = useState<string | null>(null);
 
   if (warehousesLoading || historyLoading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>Loading...</Text></SafeAreaView>;
   if (warehousesError || historyError) return <SafeAreaView className="flex-1 items-center justify-center"><Text>Error loading data</Text></SafeAreaView>;
 
-  const selectedWarehouse =
-    warehouses.find((w) => w.id === selectedWarehouseId) ??
-    warehouses.find((w) => w.name === 'Pharmacie') ??
-    warehouses[0];
 
   const dropdownOptions = warehouses.map((w) => ({ label: w.name, value: w.id }));
   const sections = selectedWarehouse?.sections ?? [];

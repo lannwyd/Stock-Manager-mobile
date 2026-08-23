@@ -2,18 +2,26 @@ import { Link } from 'expo-router';
 import { ChevronRight, Dot, Layers, Package } from 'lucide-react-native';
 import { FlatList, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { WareHouses } from '@/lib/data';
+import { useWarehouseContext } from '@/context/warehouseContext';
 
 export default function Sections() {
-  const selectedWarehouse = WareHouses.find((w) => w.key === 'pharmacie')!;
-  const sections = selectedWarehouse.sections;
-  const totalProducts = sections.reduce((sum, s) => sum + s.totalProducts, 0);
+  const { selectedWarehouse, loading, error } = useWarehouseContext();
+
+  if (loading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>Loading...</Text></SafeAreaView>;
+  if (error) return <SafeAreaView className="flex-1 items-center justify-center"><Text>Error loading data</Text></SafeAreaView>;
+
+  const sections = selectedWarehouse?.sections ?? [];
+  const totalProducts = sections.reduce((sum, section) => {
+    return sum + (section.floors ?? []).reduce((fSum, floor) => {
+      return fSum + (floor.stock_batches ?? []).reduce((bSum, batch) => bSum + (batch.quantity ?? 0), 0);
+    }, 0);
+  }, 0);
 
   return (
     <SafeAreaView className="flex-1 bg-indigo-50">
       <FlatList
         data={sections}
-        keyExtractor={(item) => item.key}
+        keyExtractor={(item) => item.id}
         contentContainerClassName="p-4 gap-4"
         ListHeaderComponent={
           <View className="gap-4">
@@ -35,27 +43,33 @@ export default function Sections() {
             </View>
           </View>
         }
-        renderItem={({ item }) => (
-          <Link href={`/sections/${item.key}`} asChild>
-            <Pressable
-              className={`flex flex-row items-start rounded-xl justify-between px-4 py-5 ${item.color}`}
-            >
-              <View className="w-[90%] flex flex-row justify-between items-center gap-2">
-                <View className="flex flex-col">
-                  <Text className="text-lg font-medium">{item.title}</Text>
-                  <Text className="text-sm text-slate-500">Click for more info</Text>
+        renderItem={({ item }) => {
+          const sectionTotal = (item.floors ?? []).reduce((fSum, floor) => {
+            return fSum + (floor.stock_batches ?? []).reduce((bSum, batch) => bSum + (batch.quantity ?? 0), 0);
+          }, 0);
+
+          return (
+            <Link href={`/sections/${item.id}`} asChild>
+              <Pressable
+                className={`flex flex-row items-start rounded-xl justify-between px-4 py-5 ${item.color ?? 'bg-slate-100'}`}
+              >
+                <View className="w-[90%] flex flex-row justify-between items-center gap-2">
+                  <View className="flex flex-col">
+                    <Text className="text-lg font-medium">{item.name}</Text>
+                    <Text className="text-sm text-slate-500">Click for more info</Text>
+                  </View>
+                  <View className="flex h-full flex-row items-center">
+                    <Dot size={34} color="#64748b" />
+                    <Text className="text-slate-600">{sectionTotal} items</Text>
+                  </View>
                 </View>
-                <View className="flex h-full flex-row items-center">
-                  <Dot size={34} color="#64748b" />
-                  <Text className="text-slate-600">{item.totalItems} items</Text>
+                <View className="w-[10%] h-full flex flex-row justify-end items-center">
+                  <ChevronRight size={26} color="#4338ca" />
                 </View>
-              </View>
-              <View className="w-[10%] h-full flex flex-row justify-end items-center">
-                <ChevronRight size={26} color="#4338ca" />
-              </View>
-            </Pressable>
-          </Link>
-        )}
+              </Pressable>
+            </Link>
+          );
+        }}
       />
     </SafeAreaView>
   );
