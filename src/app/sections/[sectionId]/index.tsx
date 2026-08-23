@@ -55,7 +55,7 @@ export default function SectionDetail() {
           const floorTotal = (item.stock_batches ?? []).reduce((sum, batch) => sum + (batch.quantity ?? 0), 0);
 
           return (
-            <Link href={`/sections/${sectionId}/floors/${item.id}`} asChild>
+            <Link href={`/sections/${sectionId}/${item.id}`} asChild>
               <Pressable className="flex flex-row items-start rounded-xl justify-between px-4 py-5 bg-white">
                 <View className="w-[90%] flex flex-row justify-between items-center gap-2">
                   <View className="flex flex-col">
