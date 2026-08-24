@@ -297,6 +297,7 @@ export default function ProductDetail() {
                     </View>
                 </View>
             </Modal>
+            
         </SafeAreaView>
     );
 }

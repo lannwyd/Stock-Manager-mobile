@@ -1,6 +1,6 @@
 import { Link, useLocalSearchParams } from 'expo-router';
-import { ChevronRight, Dot, Layers, Package } from 'lucide-react-native';
-import { FlatList, Pressable, Text, View } from 'react-native';
+import { ChevronRight, Dot, Layers, Package, Plus } from 'lucide-react-native';
+import { FlatList, Pressable, Text, View, TouchableHighlight } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useWarehouseContext } from '@/context/warehouseContext';
 
@@ -26,11 +26,11 @@ export default function SectionDetail() {
   }, 0);
 
   return (
-    <SafeAreaView className="flex-1 bg-indigo-50">
+    <SafeAreaView className="flex-1 bg-indigo-50 p-4">
       <FlatList
         data={section.floors}
         keyExtractor={(item) => item.id}
-        contentContainerClassName="p-4 gap-4"
+        contentContainerClassName=" gap-4"
         ListHeaderComponent={
           <View className="gap-4">
             <View className="flex-row gap-4">
@@ -75,6 +75,9 @@ export default function SectionDetail() {
           );
         }}
       />
+      <TouchableHighlight className={"w-full flex flex-col justify-center items-center bg-indigo-500 h-20 rounded-md "}>
+        <Plus size={36} color="#FFFFFF" />
+      </TouchableHighlight>
     </SafeAreaView>
   );
 }

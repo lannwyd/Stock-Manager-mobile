@@ -1,8 +1,8 @@
 import { useWarehouseContext } from '@/context/warehouseContext';
 import { Link, useLocalSearchParams } from 'expo-router';
-import { ChevronRight, Layers, Package, Search } from 'lucide-react-native';
+import { ChevronRight, Layers, Package, Search, Plus } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
-import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
+import { FlatList, Pressable, Text, TextInput, View, TouchableHighlight } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function FloorDetail() {
@@ -40,11 +40,11 @@ export default function FloorDetail() {
   const totalProducts = floor.stock_batches?.length ?? 0;
 
   return (
-    <SafeAreaView className="flex-1 bg-indigo-50">
+    <SafeAreaView className="flex-1 bg-indigo-50 p-4">
       <FlatList
         data={filteredBatches}
         keyExtractor={(item) => item.id}
-        contentContainerClassName="p-4 gap-4"
+        contentContainerClassName=" gap-4"
         ListHeaderComponent={
           <View className="gap-4">
             <Text className="text-2xl font-bold">{floor.name}</Text>
@@ -98,6 +98,9 @@ export default function FloorDetail() {
           </Link>
         )}
       />
+      <TouchableHighlight className={"w-full flex flex-col justify-center items-center bg-indigo-500 h-20 rounded-md "}>
+        <Plus size={36} color="#FFFFFF" />
+      </TouchableHighlight>
     </SafeAreaView>
   );
 }
