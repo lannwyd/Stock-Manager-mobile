@@ -39,6 +39,10 @@ export default function FloorDetail() {
   const totalItems = (floor.stock_batches ?? []).reduce((sum, b) => sum + (b.quantity ?? 0), 0);
   const totalProducts = floor.stock_batches?.length ?? 0;
 
+  const handleaddition = () => {
+    const new_med = {}
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-indigo-50 p-4">
       <FlatList
@@ -98,7 +102,7 @@ export default function FloorDetail() {
           </Link>
         )}
       />
-      <TouchableHighlight className={"w-full flex flex-col justify-center items-center bg-indigo-500 h-20 rounded-md "}>
+      <TouchableHighlight onPress={handleaddition} className={"w-full flex flex-col justify-center items-center bg-indigo-500 h-20 rounded-md "}>
         <Plus size={36} color="#FFFFFF" />
       </TouchableHighlight>
     </SafeAreaView>
