@@ -1,17 +1,26 @@
 import { useWarehouseContext } from '@/context/warehouseContext';
 import { Link, useLocalSearchParams } from 'expo-router';
-import { ChevronRight, Layers, Package, Search, Plus } from 'lucide-react-native';
+import { ChevronRight, Layers, Package, Search, Plus, X } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
-import { FlatList, Pressable, Text, TextInput, View, TouchableHighlight } from 'react-native';
+import { Alert, FlatList, Modal, Pressable, Text, TextInput, View, TouchableHighlight } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { supabase } from '@/lib/supabase';
 
 export default function FloorDetail() {
   const { sectionId, floorId } = useLocalSearchParams();
   const [search, setSearch] = useState('');
-  const { selectedWarehouse, loading, error } = useWarehouseContext();
+  const { selectedWarehouse, loading, error, refresh } = useWarehouseContext();
 
   const section = selectedWarehouse?.sections.find((s) => s.id === sectionId);
   const floor = section?.floors.find((f) => f.id === floorId);
+
+  const [addVisible, setAddVisible] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newDci, setNewDci] = useState('');
+  const [newLot, setNewLot] = useState('');
+  const [newExpiry, setNewExpiry] = useState('');
+  const [newQuantity, setNewQuantity] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   const filteredBatches = useMemo(() => {
     if (!floor) return [];
@@ -27,7 +36,7 @@ export default function FloorDetail() {
   }, [floor, search]);
 
   if (loading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>Loading...</Text></SafeAreaView>;
-  if (error) return <SafeAreaView className="flex-1 items-center justify-center"></SafeAreaView>;
+  if (error) return <SafeAreaView className="flex-1 items-center justify-center"><Text>{error}</Text></SafeAreaView>;
   if (!floor) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center">
@@ -39,16 +48,83 @@ export default function FloorDetail() {
   const totalItems = (floor.stock_batches ?? []).reduce((sum, b) => sum + (b.quantity ?? 0), 0);
   const totalProducts = floor.stock_batches?.length ?? 0;
 
-  const handleaddition = () => {
-    const new_med = {}
-  }
+  const resetForm = () => {
+    setNewName('');
+    setNewDci('');
+    setNewLot('');
+    setNewExpiry('');
+    setNewQuantity('');
+  };
+
+  const openAddModal = () => {
+    resetForm();
+    setAddVisible(true);
+  };
+
+  const handleAddition = async () => {
+    if (!newName.trim() || !newDci.trim() || !newLot.trim() || !newExpiry.trim()) {
+      Alert.alert('Missing info', 'Please fill in name, DCI, LOT, and expiry date.');
+      return;
+    }
+    const qty = parseInt(newQuantity, 10);
+    if (isNaN(qty) || qty <= 0) {
+      Alert.alert('Invalid quantity', 'Enter a quantity greater than 0.');
+      return;
+    }
+
+    setSubmitting(true);
+
+    let productId: string;
+    const { data: existingProduct } = await supabase
+      .from('products')
+      .select('id')
+      .eq('name', newName.trim())
+      .eq('dci', newDci.trim())
+      .maybeSingle();
+
+    if (existingProduct) {
+      productId = existingProduct.id;
+    } else {
+      const { data: createdProduct, error: productError } = await supabase
+        .from('products')
+        .insert({ name: newName.trim(), dci: newDci.trim() })
+        .select('id')
+        .single();
+
+      if (productError || !createdProduct) {
+        setSubmitting(false);
+        Alert.alert('Error', productError?.message ?? 'Could not create product');
+        return;
+      }
+      productId = createdProduct.id;
+    }
+
+    const { error: batchError } = await supabase.from('stock_batches').insert({
+      product_id: productId,
+      floor_id: floorId,
+      lot: newLot.trim(),
+      expiry_date: newExpiry.trim(),
+      quantity: qty,
+    });
+
+    setSubmitting(false);
+
+    if (batchError) {
+      Alert.alert('Error', batchError.message);
+      return;
+    }
+
+    setAddVisible(false);
+    resetForm();
+    refresh();
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-indigo-50 p-4">
       <FlatList
         data={filteredBatches}
         keyExtractor={(item) => item.id}
-        contentContainerClassName=" gap-4"
+        contentContainerClassName="gap-4"
         ListHeaderComponent={
           <View className="gap-4">
             <Text className="text-2xl font-bold">{floor.name}</Text>
@@ -102,9 +178,85 @@ export default function FloorDetail() {
           </Link>
         )}
       />
-      <TouchableHighlight onPress={handleaddition} className={"w-full flex flex-col justify-center items-center bg-indigo-500 h-20 rounded-md "}>
+
+      <TouchableHighlight
+        onPress={openAddModal}
+        className="w-full flex flex-col justify-center items-center bg-indigo-500 h-20 rounded-md"
+      >
         <Plus size={36} color="#FFFFFF" />
       </TouchableHighlight>
+
+      <Modal visible={addVisible} animationType="slide" transparent onRequestClose={() => setAddVisible(false)}>
+        <View className="flex-1 justify-end bg-black/40">
+          <View className="bg-white rounded-t-2xl p-5 gap-4">
+            <View className="flex-row items-center justify-between">
+              <Text className="text-lg font-bold">Add product to {floor.name}</Text>
+              <Pressable onPress={() => setAddVisible(false)}>
+                <X size={22} color="#64748b" />
+              </Pressable>
+            </View>
+
+            <View className="gap-1">
+              <Text className="text-slate-500 text-xs">Product name</Text>
+              <TextInput
+                className="border border-slate-300 rounded-lg px-3 py-2 text-base"
+                value={newName}
+                onChangeText={setNewName}
+                placeholder="Paralgan"
+              />
+            </View>
+
+            <View className="gap-1">
+              <Text className="text-slate-500 text-xs">DCI</Text>
+              <TextInput
+                className="border border-slate-300 rounded-lg px-3 py-2 text-base"
+                value={newDci}
+                onChangeText={setNewDci}
+                placeholder="Paracetamol"
+              />
+            </View>
+
+            <View className="gap-1">
+              <Text className="text-slate-500 text-xs">LOT</Text>
+              <TextInput
+                className="border border-slate-300 rounded-lg px-3 py-2 text-base"
+                value={newLot}
+                onChangeText={setNewLot}
+                placeholder="LOT-24A7X9"
+              />
+            </View>
+
+            <View className="gap-1">
+              <Text className="text-slate-500 text-xs">Expiry date (YYYY-MM-DD)</Text>
+              <TextInput
+                className="border border-slate-300 rounded-lg px-3 py-2 text-base"
+                value={newExpiry}
+                onChangeText={setNewExpiry}
+                placeholder="2027-01-01"
+              />
+            </View>
+
+            <View className="gap-1">
+              <Text className="text-slate-500 text-xs">Quantity</Text>
+              <TextInput
+                className="border border-slate-300 rounded-lg px-3 py-2 text-base"
+                keyboardType="numeric"
+                value={newQuantity}
+                onChangeText={setNewQuantity}
+                placeholder="50"
+              />
+            </View>
+
+            <Pressable
+              onPress={handleAddition}
+              disabled={submitting}
+              className="bg-indigo-700 rounded-xl py-3 items-center mt-2"
+            >
+              <Text className="text-white font-semibold">{submitting ? 'Adding...' : 'Add product'}</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }

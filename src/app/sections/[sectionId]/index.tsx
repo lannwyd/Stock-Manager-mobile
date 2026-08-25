@@ -1,15 +1,21 @@
 import { Link, useLocalSearchParams } from 'expo-router';
-import { ChevronRight, Dot, Layers, Package, Plus } from 'lucide-react-native';
-import { FlatList, Pressable, Text, View, TouchableHighlight } from 'react-native';
+import { ChevronRight, Dot, Layers, Package, Plus, X } from 'lucide-react-native';
+import { useState } from 'react';
+import { Alert, FlatList, Modal, Pressable, Text, TextInput, View, TouchableHighlight } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useWarehouseContext } from '@/context/warehouseContext';
+import { supabase } from '@/lib/supabase';
 
 export default function SectionDetail() {
   const { sectionId } = useLocalSearchParams();
-  const { selectedWarehouse, loading, error } = useWarehouseContext();
+  const { selectedWarehouse, loading, error, refresh } = useWarehouseContext();
+
+  const [addVisible, setAddVisible] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   if (loading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>Loading...</Text></SafeAreaView>;
-  if (error) return <SafeAreaView className="flex-1 items-center justify-center"><Text>Error loading data</Text></SafeAreaView>;
+  if (error) return <SafeAreaView className="flex-1 items-center justify-center"><Text>{error}</Text></SafeAreaView>;
 
   const section = selectedWarehouse?.sections.find((s) => s.id === sectionId);
 
@@ -25,12 +31,39 @@ export default function SectionDetail() {
     return fSum + (floor.stock_batches ?? []).reduce((bSum, batch) => bSum + (batch.quantity ?? 0), 0);
   }, 0);
 
+  const openAddModal = () => {
+    setNewName('');
+    setAddVisible(true);
+  };
+
+  const handleAddFloor = async () => {
+    if (!newName.trim()) {
+      Alert.alert('Missing name', 'Please enter a floor name.');
+      return;
+    }
+
+    setSubmitting(true);
+    const { error: insertError } = await supabase.from('floors').insert({
+      section_id: sectionId,
+      name: newName.trim(),
+    });
+    setSubmitting(false);
+
+    if (insertError) {
+      Alert.alert('Error', insertError.message);
+      return;
+    }
+
+    setAddVisible(false);
+    refresh();
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-indigo-50 p-4">
       <FlatList
         data={section.floors}
         keyExtractor={(item) => item.id}
-        contentContainerClassName=" gap-4"
+        contentContainerClassName="gap-4"
         ListHeaderComponent={
           <View className="gap-4">
             <View className="flex-row gap-4">
@@ -75,9 +108,44 @@ export default function SectionDetail() {
           );
         }}
       />
-      <TouchableHighlight className={"w-full flex flex-col justify-center items-center bg-indigo-500 h-20 rounded-md "}>
+
+      <TouchableHighlight
+        onPress={openAddModal}
+        className="w-full flex flex-col justify-center items-center bg-indigo-500 h-20 rounded-md"
+      >
         <Plus size={36} color="#FFFFFF" />
       </TouchableHighlight>
+
+      <Modal visible={addVisible} animationType="slide" transparent onRequestClose={() => setAddVisible(false)}>
+        <View className="flex-1 justify-end bg-black/40">
+          <View className="bg-white rounded-t-2xl p-5 gap-4">
+            <View className="flex-row items-center justify-between">
+              <Text className="text-lg font-bold">New floor</Text>
+              <Pressable onPress={() => setAddVisible(false)}>
+                <X size={22} color="#64748b" />
+              </Pressable>
+            </View>
+
+            <View className="gap-1">
+              <Text className="text-slate-500 text-xs">Floor name</Text>
+              <TextInput
+                className="border border-slate-300 rounded-lg px-3 py-2 text-base"
+                value={newName}
+                onChangeText={setNewName}
+                placeholder="Floor 4"
+              />
+            </View>
+
+            <Pressable
+              onPress={handleAddFloor}
+              disabled={submitting}
+              className="bg-indigo-700 rounded-xl py-3 items-center mt-2"
+            >
+              <Text className="text-white font-semibold">{submitting ? 'Adding...' : 'Add floor'}</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
