@@ -1,11 +1,11 @@
+import { useWarehouseContext } from '@/context/warehouseContext';
+import { useProduct } from '@/hooks/useProduct';
+import { supabase } from '@/lib/supabase';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Pencil, Trash2, ArrowLeftRight, Calendar, Hash, Layers, X } from 'lucide-react-native';
+import { ArrowLeftRight, Calendar, Hash, Layers, MapPin, Pencil, Trash2, X } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useProduct } from '@/hooks/useProduct';
-import { useWarehouseContext } from '@/context/warehouseContext';
-import { supabase } from '@/lib/supabase';
 
 export default function ProductDetail() {
     const { productId } = useLocalSearchParams();
@@ -33,6 +33,17 @@ export default function ProductDetail() {
                 <Text>Product not found</Text>
             </SafeAreaView>
         );
+    }
+
+    let location: { warehouseName: string; sectionName: string; floorName: string } | null = null;
+    for (const warehouse of warehouses) {
+        for (const section of warehouse.sections ?? []) {
+            for (const floor of section.floors ?? []) {
+                if ((floor.stock_batches ?? []).some((b) => b.id === batch.id)) {
+                    location = { warehouseName: warehouse.name, sectionName: section.name, floorName: floor.name };
+                }
+            }
+        }
     }
 
     const handleDelete = () => {
@@ -134,6 +145,14 @@ export default function ProductDetail() {
             <ScrollView contentContainerClassName="p-4 gap-4">
                 <View className="bg-white rounded-xl border border-slate-200 p-5 gap-4">
                     <Text className="text-2xl font-bold">{batch.products?.name}</Text>
+                    {location && (
+                        <View className="flex-row items-center gap-2 bg-indigo-50 rounded-lg px-3 py-2">
+                            <MapPin size={16} color="#4338ca" />
+                            <Text className="text-sm text-indigo-800">
+                                {location.warehouseName} · {location.sectionName} · {location.floorName}
+                            </Text>
+                        </View>
+                    )}
 
                     <View className="gap-3">
                         <View className="flex-row items-center gap-3">
@@ -297,7 +316,7 @@ export default function ProductDetail() {
                     </View>
                 </View>
             </Modal>
-            
+
         </SafeAreaView>
     );
 }
