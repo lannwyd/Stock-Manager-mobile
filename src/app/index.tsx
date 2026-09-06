@@ -3,7 +3,7 @@ import { useWarehouseContext } from '@/context/warehouseContext';
 import { useHistory } from '@/hooks/useHistory';
 import { Link } from 'expo-router';
 import { ChevronRight, Dot, Layers, Package, Search } from 'lucide-react-native';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -11,12 +11,33 @@ export default function Home() {
   const { warehouses, loading: warehousesLoading, error: warehousesError, selectedWarehouseId, setSelectedWarehouseId, selectedWarehouse } = useWarehouseContext();
   const { historyItems, loading: historyLoading, error: historyError } = useHistory();
 
-  
   const [search, setsearch] = useState('');
+
+  const allBatches = useMemo(() => {
+    const sections = selectedWarehouse?.sections ?? [];
+    return sections.flatMap((section) =>
+      (section.floors ?? []).flatMap((floor) =>
+        (floor.stock_batches ?? []).map((batch) => ({
+          ...batch,
+          sectionId: section.id,
+          floorId: floor.id,
+        }))
+      )
+    );
+  }, [selectedWarehouse]);
+
+  const searchResults = useMemo(() => {
+    if (!search.trim()) return [];
+    const query = search.trim().toLowerCase();
+    return allBatches.filter(
+      (b) =>
+        b.products?.name?.toLowerCase().includes(query) ||
+        b.products?.dci?.toLowerCase().includes(query)
+    );
+  }, [allBatches, search]);
 
   if (warehousesLoading || historyLoading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>Loading...</Text></SafeAreaView>;
   if (warehousesError || historyError) return <SafeAreaView className="flex-1 items-center justify-center"><Text>Error loading data</Text></SafeAreaView>;
-
 
   const dropdownOptions = warehouses.map((w) => ({ label: w.name, value: w.id }));
   const sections = selectedWarehouse?.sections ?? [];
@@ -27,10 +48,12 @@ export default function Home() {
     }, 0);
   }, 0);
 
+  const isSearching = search.trim().length > 0;
+
   return (
     <SafeAreaView className="flex-1 bg-indigo-50">
       <FlatList
-        data={historyItems}
+        data={isSearching ? searchResults : historyItems}
         keyExtractor={(item) => item.id}
         contentContainerClassName="p-4 gap-4"
         ListHeaderComponent={
@@ -54,88 +77,120 @@ export default function Home() {
               />
             </View>
 
-            <View className="flex-row gap-4">
-              <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
-                <Package size={20} color="#4338ca" />
-                <Text className="text-2xl font-bold mt-2">{totalProducts}</Text>
-                <Text className="text-slate-500 text-sm">Total items</Text>
-              </View>
-              <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
-                <Layers size={20} color="#4338ca" />
-                <Text className="text-2xl font-bold mt-2">{sections.length}</Text>
-                <Text className="text-slate-500 text-sm">Sections</Text>
-              </View>
-            </View>
+            {!isSearching && (
+              <>
+                <View className="flex-row gap-4">
+                  <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
+                    <Package size={20} color="#4338ca" />
+                    <Text className="text-2xl font-bold mt-2">{totalProducts}</Text>
+                    <Text className="text-slate-500 text-sm">Total items</Text>
+                  </View>
+                  <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
+                    <Layers size={20} color="#4338ca" />
+                    <Text className="text-2xl font-bold mt-2">{sections.length}</Text>
+                    <Text className="text-slate-500 text-sm">Sections</Text>
+                  </View>
+                </View>
 
-            <View className="bg-white rounded-xl border border-slate-200 p-4 gap-3">
-              <View className="flex-row items-center justify-between">
-                <Text className="font-semibold text-lg">Sections</Text>
-                <Link href="/sections" asChild>
+                <View className="bg-white rounded-xl border border-slate-200 p-4 gap-3">
+                  <View className="flex-row items-center justify-between">
+                    <Text className="font-semibold text-lg">Sections</Text>
+                    <Link href="/sections" asChild>
+                      <Pressable className="flex-row items-center">
+                        <Text className="text-indigo-700 font-medium mr-1">View all</Text>
+                        <ChevronRight size={16} color="#4338ca" />
+                      </Pressable>
+                    </Link>
+                  </View>
+
+                  <View className="gap-3">
+                    {sections.slice(0, 2).map((item) => {
+                      const sectionTotal = (item.floors ?? []).reduce((fSum, floor) => {
+                        return fSum + (floor.stock_batches ?? []).reduce((bSum, batch) => bSum + (batch.quantity ?? 0), 0);
+                      }, 0);
+
+                      return (
+                        <Link key={item.id} href={`/sections/${item.id}`} asChild>
+                          <Pressable
+                            className={`flex flex-row items-start rounded-xl justify-between px-4 py-5 ${item.color ?? 'bg-slate-100'}`}
+                          >
+                            <View className="w-[90%] flex flex-row justify-between items-center gap-2">
+                              <View className="flex flex-col">
+                                <Text className="text-lg font-medium">{item.name}</Text>
+                                <Text className="text-sm text-slate-500">Click for more info</Text>
+                              </View>
+                              <View className="flex h-full flex-row items-center">
+                                <Dot size={34} color="#64748b" />
+                                <Text className="text-slate-600">{sectionTotal} items</Text>
+                              </View>
+                            </View>
+                            <View className="w-[10%] h-full flex flex-row justify-end items-center">
+                              <ChevronRight size={26} color="#4338ca" />
+                            </View>
+                          </Pressable>
+                        </Link>
+                      );
+                    })}
+
+                    {sections.length > 2 ? (
+                      <View className="w-full flex flex-row items-center justify-center">
+                        <Dot size={15} />
+                        <Dot size={15} />
+                        <Dot size={15} />
+                      </View>
+                    ) : null}
+                  </View>
+                </View>
+
+                <View className="flex-row items-center justify-between mt-2 px-1">
+                  <Text className="font-semibold text-lg">History</Text>
                   <Pressable className="flex-row items-center">
                     <Text className="text-indigo-700 font-medium mr-1">View all</Text>
                     <ChevronRight size={16} color="#4338ca" />
                   </Pressable>
-                </Link>
-              </View>
+                </View>
+              </>
+            )}
 
-              <View className="gap-3">
-                {sections.slice(0, 2).map((item) => {
-                  const sectionTotal = (item.floors ?? []).reduce((fSum, floor) => {
-                    return fSum + (floor.stock_batches ?? []).reduce((bSum, batch) => bSum + (batch.quantity ?? 0), 0);
-                  }, 0);
-
-                  return (
-                    <Link key={item.id} href={`/sections/${item.id}`} asChild>
-                      <Pressable
-                        className={`flex flex-row items-start rounded-xl justify-between px-4 py-5 ${item.color ?? 'bg-slate-100'}`}
-                      >
-                        <View className="w-[90%] flex flex-row justify-between items-center gap-2">
-                          <View className="flex flex-col">
-                            <Text className="text-lg font-medium">{item.name}</Text>
-                            <Text className="text-sm text-slate-500">Click for more info</Text>
-                          </View>
-                          <View className="flex h-full flex-row items-center">
-                            <Dot size={34} color="#64748b" />
-                            <Text className="text-slate-600">{sectionTotal} items</Text>
-                          </View>
-                        </View>
-                        <View className="w-[10%] h-full flex flex-row justify-end items-center">
-                          <ChevronRight size={26} color="#4338ca" />
-                        </View>
-                      </Pressable>
-                    </Link>
-                  );
-                })}
-
-                {sections.length > 2 ? (
-                  <View className="w-full flex flex-row items-center justify-center">
-                    <Dot size={15} />
-                    <Dot size={15} />
-                    <Dot size={15} />
-                  </View>
-                ) : null}
-              </View>
-            </View>
-
-            <View className="flex-row items-center justify-between mt-2 px-1">
-              <Text className="font-semibold text-lg">History</Text>
-              <Pressable className="flex-row items-center">
-                <Text className="text-indigo-700 font-medium mr-1">View all</Text>
-                <ChevronRight size={16} color="#4338ca" />
-              </Pressable>
-            </View>
+            {isSearching && (
+              <Text className="font-semibold text-lg px-1">
+                {searchResults.length} result{searchResults.length !== 1 ? 's' : ''}
+              </Text>
+            )}
           </View>
         }
-        renderItem={({ item }) => (
-          <View className="bg-white px-4 py-3 rounded-xl border border-slate-200">
-            <Text className="text-base font-medium">
-              {item.stock_batches?.products?.name ?? 'Unknown Product'}
-            </Text>
-            <Text className="text-slate-400 text-sm">
-              {item.from_warehouse?.name ?? 'N/A'} → {item.to_warehouse?.name ?? 'N/A'} · {item.quantity} units · {new Date(item.created_at).toLocaleDateString()}
-            </Text>
-          </View>
-        )}
+        ListEmptyComponent={
+          isSearching ? (
+            <View className="items-center py-8">
+              <Text className="text-slate-400">No products match your search</Text>
+            </View>
+          ) : null
+        }
+        renderItem={({ item }) =>
+          isSearching ? (
+            <Link href={`/sections/${item.sectionId}/${item.floorId}/${item.id}`} asChild>
+              <Pressable className="flex-row items-center justify-between bg-white rounded-xl border border-slate-200 px-4 py-4">
+                <View>
+                  <Text className="text-base font-medium">{item.products?.name}</Text>
+                  <Text className="text-sm text-slate-500">{item.products?.dci}</Text>
+                </View>
+                <View className="flex-row items-center gap-2">
+                  <Text className="text-slate-600">{item.quantity} units</Text>
+                  <ChevronRight size={20} color="#4338ca" />
+                </View>
+              </Pressable>
+            </Link>
+          ) : (
+            <View className="bg-white px-4 py-3 rounded-xl border border-slate-200">
+              <Text className="text-base font-medium">
+                {item.stock_batches?.products?.name ?? 'Unknown Product'}
+              </Text>
+              <Text className="text-slate-400 text-sm">
+                {item.from_warehouse?.name ?? 'N/A'} → {item.to_warehouse?.name ?? 'N/A'} · {item.quantity} units · {new Date(item.created_at).toLocaleDateString()}
+              </Text>
+            </View>
+          )
+        }
       />
     </SafeAreaView>
   );
