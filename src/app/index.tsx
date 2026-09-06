@@ -2,7 +2,7 @@ import DropdownComponent from '@/components/shared/dropdowncomp';
 import { useWarehouseContext } from '@/context/warehouseContext';
 import { useHistory } from '@/hooks/useHistory';
 import { Link } from 'expo-router';
-import { ChevronRight, Dot, Layers, Package, Search } from 'lucide-react-native';
+import { ChevronLeft, Dot, Layers, Package, Search } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -36,8 +36,8 @@ export default function Home() {
     );
   }, [allBatches, search]);
 
-  if (warehousesLoading || historyLoading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>Loading...</Text></SafeAreaView>;
-  if (warehousesError || historyError) return <SafeAreaView className="flex-1 items-center justify-center"><Text>Error loading data</Text></SafeAreaView>;
+  if (warehousesLoading || historyLoading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>جار التحميل...</Text></SafeAreaView>;
+  if (warehousesError || historyError) return <SafeAreaView className="flex-1 items-center justify-center"><Text>حدث خطأ أثناء تحميل البيانات</Text></SafeAreaView>;
 
   const dropdownOptions = warehouses.map((w) => ({ label: w.name, value: w.id }));
   const sections = selectedWarehouse?.sections ?? [];
@@ -67,8 +67,8 @@ export default function Home() {
             <View className="flex-row items-center bg-white w-full h-14 rounded-xl border border-slate-400 px-3">
               <Search size={20} color="#64748b" />
               <TextInput
-                className="flex-1 ml-2 h-full text-base text-slate-800"
-                placeholder="Search products..."
+                className="flex-1 mr-2 h-full text-base text-slate-800 text-right"
+                placeholder="ابحث عن منتج..."
                 placeholderTextColor="#888"
                 value={search}
                 onChangeText={setsearch}
@@ -82,23 +82,23 @@ export default function Home() {
                 <View className="flex-row gap-4">
                   <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
                     <Package size={20} color="#4338ca" />
-                    <Text className="text-2xl font-bold mt-2">{totalProducts}</Text>
-                    <Text className="text-slate-500 text-sm">Total items</Text>
+                    <Text className="text-2xl font-bold mt-2 text-right">{totalProducts}</Text>
+                    <Text className="text-slate-700 text-md text-right">إجمالي المنتجات</Text>
                   </View>
                   <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
                     <Layers size={20} color="#4338ca" />
-                    <Text className="text-2xl font-bold mt-2">{sections.length}</Text>
-                    <Text className="text-slate-500 text-sm">Sections</Text>
+                    <Text className="text-2xl font-bold mt-2 text-right">{sections.length}</Text>
+                    <Text className="text-slate-700 text-md text-right">الأقسام</Text>
                   </View>
                 </View>
 
                 <View className="bg-white rounded-xl border border-slate-200 p-4 gap-3">
                   <View className="flex-row items-center justify-between">
-                    <Text className="font-semibold text-lg">Sections</Text>
+                    <Text className="font-semibold text-lg">الأقسام</Text>
                     <Link href="/sections" asChild>
                       <Pressable className="flex-row items-center">
-                        <Text className="text-indigo-700 font-medium mr-1">View all</Text>
-                        <ChevronRight size={16} color="#4338ca" />
+                        <Text className="text-indigo-700 font-medium ml-1">عرض الكل</Text>
+                        <ChevronLeft size={16} color="#4338ca" />
                       </Pressable>
                     </Link>
                   </View>
@@ -115,17 +115,17 @@ export default function Home() {
                             className={`flex flex-row items-start rounded-xl justify-between px-4 py-5 ${item.color ?? 'bg-slate-100'}`}
                           >
                             <View className="w-[90%] flex flex-row justify-between items-center gap-2">
-                              <View className="flex flex-col">
-                                <Text className="text-lg font-medium">{item.name}</Text>
-                                <Text className="text-sm text-slate-500">Click for more info</Text>
+                              <View className="flex gap-2 flex-col">
+                                <Text className="text-lg font-medium text-left">{item.name}</Text>
+                                <Text className="text-sm text-slate-500 text-right">اضغط لمزيد من المعلومات</Text>
                               </View>
                               <View className="flex h-full flex-row items-center">
                                 <Dot size={34} color="#64748b" />
-                                <Text className="text-slate-600">{sectionTotal} items</Text>
+                                <Text className="text-slate-600">{sectionTotal} منتج</Text>
                               </View>
                             </View>
                             <View className="w-[10%] h-full flex flex-row justify-end items-center">
-                              <ChevronRight size={26} color="#4338ca" />
+                              <ChevronLeft size={26} color="#4338ca" />
                             </View>
                           </Pressable>
                         </Link>
@@ -143,18 +143,20 @@ export default function Home() {
                 </View>
 
                 <View className="flex-row items-center justify-between mt-2 px-1">
-                  <Text className="font-semibold text-lg">History</Text>
+                  <Text className="font-semibold text-lg">السجل</Text>
                   <Pressable className="flex-row items-center">
-                    <Text className="text-indigo-700 font-medium mr-1">View all</Text>
-                    <ChevronRight size={16} color="#4338ca" />
+                    <Link href={"/sections/history"} asChild>
+                      <Text className="text-indigo-700 font-medium ml-1">عرض الكل</Text>
+                    </Link>
+                    <ChevronLeft size={16} color="#4338ca" />
                   </Pressable>
                 </View>
               </>
             )}
 
             {isSearching && (
-              <Text className="font-semibold text-lg px-1">
-                {searchResults.length} result{searchResults.length !== 1 ? 's' : ''}
+              <Text className="font-semibold text-lg px-1 text-right">
+                {searchResults.length} نتيجة
               </Text>
             )}
           </View>
@@ -162,7 +164,7 @@ export default function Home() {
         ListEmptyComponent={
           isSearching ? (
             <View className="items-center py-8">
-              <Text className="text-slate-400">No products match your search</Text>
+              <Text className="text-slate-400">لا توجد منتجات مطابقة</Text>
             </View>
           ) : null
         }
@@ -171,23 +173,32 @@ export default function Home() {
             <Link href={`/sections/${item.sectionId}/${item.floorId}/${item.id}`} asChild>
               <Pressable className="flex-row items-center justify-between bg-white rounded-xl border border-slate-200 px-4 py-4">
                 <View>
-                  <Text className="text-base font-medium">{item.products?.name}</Text>
-                  <Text className="text-sm text-slate-500">{item.products?.dci}</Text>
+                  <Text className="text-base font-medium text-left">{item.products?.name}</Text>
+                  <Text className="text-sm text-slate-500 text-right">{item.products?.dci}</Text>
                 </View>
                 <View className="flex-row items-center gap-2">
-                  <Text className="text-slate-600">{item.quantity} units</Text>
-                  <ChevronRight size={20} color="#4338ca" />
+                  <Text className="text-slate-600">{item.quantity} منتج</Text>
+                  <ChevronLeft size={20} color="#4338ca" />
                 </View>
               </Pressable>
             </Link>
           ) : (
-            <View className="bg-white px-4 py-3 rounded-xl border border-slate-200">
-              <Text className="text-base font-medium">
-                {item.stock_batches?.products?.name ?? 'Unknown Product'}
-              </Text>
-              <Text className="text-slate-400 text-sm">
-                {item.from_warehouse?.name ?? 'N/A'} → {item.to_warehouse?.name ?? 'N/A'} · {item.quantity} units · {new Date(item.created_at).toLocaleDateString()}
-              </Text>
+            <View className="flex flex-row justify-between bg-white px-4 py-3 rounded-xl border border-slate-200">
+              <View >
+                <Text className="flex flex-col items-center text-base font-medium text-right">
+                  {item.quantity} علب
+                </Text>
+              </View>
+              <View>
+                <Text className="text-base font-medium text-right">
+                  {item.stock_batches?.products?.name ?? 'منتج غير معروف'}
+                </Text>
+                <Text className=" text-sm text-right">
+                  {item.from_warehouse?.name ?? 'N/A'} ← {item.to_warehouse?.name ?? 'N/A'} · {new Date(item.created_at).toLocaleDateString()}
+                </Text>
+              </View>
+
+
             </View>
           )
         }
