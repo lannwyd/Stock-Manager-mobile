@@ -1,6 +1,6 @@
 import { useWarehouseContext } from '@/context/warehouseContext';
 import { Link, useLocalSearchParams } from 'expo-router';
-import { ChevronRight, Layers, Package, Search, Plus, X } from 'lucide-react-native';
+import { ChevronLeft, Layers, Package, Search, Plus, X } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { Alert, FlatList, Modal, Pressable, Text, TextInput, View, TouchableHighlight } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -35,12 +35,12 @@ export default function FloorDetail() {
     );
   }, [floor, search]);
 
-  if (loading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>Loading...</Text></SafeAreaView>;
+  if (loading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>جار التحميل...</Text></SafeAreaView>;
   if (error) return <SafeAreaView className="flex-1 items-center justify-center"><Text>{error}</Text></SafeAreaView>;
   if (!floor) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center">
-        <Text>Floor not found</Text>
+        <Text>الطابق غير موجود</Text>
       </SafeAreaView>
     );
   }
@@ -63,12 +63,12 @@ export default function FloorDetail() {
 
   const handleAddition = async () => {
     if (!newName.trim() || !newDci.trim() || !newLot.trim() || !newExpiry.trim()) {
-      Alert.alert('Missing info', 'Please fill in name, DCI, LOT, and expiry date.');
+      Alert.alert('معلومات ناقصة', 'يرجى إدخال الاسم، الـ DCI، رقم اللوت، وتاريخ الانتهاء.');
       return;
     }
     const qty = parseInt(newQuantity, 10);
     if (isNaN(qty) || qty <= 0) {
-      Alert.alert('Invalid quantity', 'Enter a quantity greater than 0.');
+      Alert.alert('كمية غير صالحة', 'أدخل كمية أكبر من 0.');
       return;
     }
 
@@ -93,7 +93,7 @@ export default function FloorDetail() {
 
       if (productError || !createdProduct) {
         setSubmitting(false);
-        Alert.alert('Error', productError?.message ?? 'Could not create product');
+        Alert.alert('خطأ', productError?.message ?? 'تعذر إنشاء المنتج');
         return;
       }
       productId = createdProduct.id;
@@ -110,7 +110,7 @@ export default function FloorDetail() {
     setSubmitting(false);
 
     if (batchError) {
-      Alert.alert('Error', batchError.message);
+      Alert.alert('خطأ', batchError.message);
       return;
     }
 
@@ -127,13 +127,13 @@ export default function FloorDetail() {
         contentContainerClassName="gap-4"
         ListHeaderComponent={
           <View className="gap-4">
-            <Text className="text-2xl font-bold">{floor.name}</Text>
+            <Text className="text-2xl font-bold text-right">{floor.name}</Text>
 
             <View className="flex-row items-center bg-white w-full h-14 rounded-xl border border-slate-400 px-3">
               <Search size={20} color="#64748b" />
               <TextInput
-                className="flex-1 ml-2 h-full text-base text-slate-800"
-                placeholder="Search products or DCI..."
+                className="flex-1 mr-2 h-full text-base text-slate-800 text-right"
+                placeholder="ابحث عن منتج أو DCI..."
                 placeholderTextColor="#888"
                 value={search}
                 onChangeText={setSearch}
@@ -145,34 +145,34 @@ export default function FloorDetail() {
             <View className="flex-row gap-4">
               <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
                 <Package size={20} color="#4338ca" />
-                <Text className="text-2xl font-bold mt-2">{totalItems}</Text>
-                <Text className="text-slate-500 text-sm">Total items</Text>
+                <Text className="text-2xl font-bold mt-2 text-right">{totalItems}</Text>
+                <Text className="text-slate-500 text-sm text-right">إجمالي المنتجات</Text>
               </View>
               <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
                 <Layers size={20} color="#4338ca" />
-                <Text className="text-2xl font-bold mt-2">{totalProducts}</Text>
-                <Text className="text-slate-500 text-sm">Products</Text>
+                <Text className="text-2xl font-bold mt-2 text-right">{totalProducts}</Text>
+                <Text className="text-slate-500 text-sm text-right">المنتجات</Text>
               </View>
             </View>
 
-            <Text className="font-semibold text-lg mt-2 px-1">Products</Text>
+            <Text className="font-semibold text-lg mt-2 px-1">المنتجات</Text>
           </View>
         }
         ListEmptyComponent={
           <View className="items-center py-8">
-            <Text className="text-slate-400">No products match your search</Text>
+            <Text className="text-slate-400">لا توجد منتجات مطابقة</Text>
           </View>
         }
         renderItem={({ item }) => (
           <Link href={`/sections/${sectionId}/${floorId}/${item.id}`} asChild>
             <Pressable className="flex-row items-center justify-between bg-white rounded-xl border border-slate-200 px-4 py-4">
               <View>
-                <Text className="text-base font-medium">{item.products?.name}</Text>
-                <Text className="text-sm text-slate-500">{item.products?.dci}</Text>
+                <Text className="text-base font-medium text-right">{item.products?.name}</Text>
+                <Text className="text-sm text-slate-500 text-right">{item.products?.dci}</Text>
               </View>
               <View className="flex-row items-center gap-2">
-                <Text className="text-slate-600">{item.quantity} units</Text>
-                <ChevronRight size={20} color="#4338ca" />
+                <Text className="text-slate-600">{item.quantity} منتج</Text>
+                <ChevronLeft size={20} color="#4338ca" />
               </View>
             </Pressable>
           </Link>
@@ -190,16 +190,16 @@ export default function FloorDetail() {
         <View className="flex-1 justify-end bg-black/40">
           <View className="bg-white rounded-t-2xl p-5 gap-4">
             <View className="flex-row items-center justify-between">
-              <Text className="text-lg font-bold">Add product to {floor.name}</Text>
+              <Text className="text-lg font-bold">إضافة منتج إلى {floor.name}</Text>
               <Pressable onPress={() => setAddVisible(false)}>
                 <X size={22} color="#64748b" />
               </Pressable>
             </View>
 
             <View className="gap-1">
-              <Text className="text-slate-500 text-xs">Product name</Text>
+              <Text className="text-slate-500 text-xs text-right">اسم المنتج</Text>
               <TextInput
-                className="border border-slate-300 rounded-lg px-3 py-2 text-base"
+                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
                 value={newName}
                 onChangeText={setNewName}
                 placeholder="Paralgan"
@@ -207,9 +207,9 @@ export default function FloorDetail() {
             </View>
 
             <View className="gap-1">
-              <Text className="text-slate-500 text-xs">DCI</Text>
+              <Text className="text-slate-500 text-xs text-right">DCI</Text>
               <TextInput
-                className="border border-slate-300 rounded-lg px-3 py-2 text-base"
+                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
                 value={newDci}
                 onChangeText={setNewDci}
                 placeholder="Paracetamol"
@@ -217,9 +217,9 @@ export default function FloorDetail() {
             </View>
 
             <View className="gap-1">
-              <Text className="text-slate-500 text-xs">LOT</Text>
+              <Text className="text-slate-500 text-xs text-right">رقم اللوت</Text>
               <TextInput
-                className="border border-slate-300 rounded-lg px-3 py-2 text-base"
+                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
                 value={newLot}
                 onChangeText={setNewLot}
                 placeholder="LOT-24A7X9"
@@ -227,9 +227,9 @@ export default function FloorDetail() {
             </View>
 
             <View className="gap-1">
-              <Text className="text-slate-500 text-xs">Expiry date (YYYY-MM-DD)</Text>
+              <Text className="text-slate-500 text-xs text-right">تاريخ الانتهاء (YYYY-MM-DD)</Text>
               <TextInput
-                className="border border-slate-300 rounded-lg px-3 py-2 text-base"
+                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
                 value={newExpiry}
                 onChangeText={setNewExpiry}
                 placeholder="2027-01-01"
@@ -237,9 +237,9 @@ export default function FloorDetail() {
             </View>
 
             <View className="gap-1">
-              <Text className="text-slate-500 text-xs">Quantity</Text>
+              <Text className="text-slate-500 text-xs text-right">الكمية</Text>
               <TextInput
-                className="border border-slate-300 rounded-lg px-3 py-2 text-base"
+                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
                 keyboardType="numeric"
                 value={newQuantity}
                 onChangeText={setNewQuantity}
@@ -252,7 +252,7 @@ export default function FloorDetail() {
               disabled={submitting}
               className="bg-indigo-700 rounded-xl py-3 items-center mt-2"
             >
-              <Text className="text-white font-semibold">{submitting ? 'Adding...' : 'Add product'}</Text>
+              <Text className="text-white font-semibold">{submitting ? 'جارٍ الإضافة...' : 'إضافة منتج'}</Text>
             </Pressable>
           </View>
         </View>

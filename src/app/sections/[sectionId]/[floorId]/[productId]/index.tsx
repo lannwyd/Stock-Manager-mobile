@@ -21,16 +21,17 @@ export default function ProductDetail() {
     const [editExpiry, setEditExpiry] = useState('');
 
     const [transferQuantity, setTransferQuantity] = useState('');
+    const [transferNote, setTransferNote] = useState('');
     const [transferTargetWarehouseId, setTransferTargetWarehouseId] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
 
-    if (loading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>Loading...</Text></SafeAreaView>;
+    if (loading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>جار التحميل...</Text></SafeAreaView>;
     if (error) return <SafeAreaView className="flex-1 items-center justify-center"><Text>{error}</Text></SafeAreaView>;
 
     if (!batch) {
         return (
             <SafeAreaView className="flex-1 items-center justify-center">
-                <Text>Product not found</Text>
+                <Text>المنتج غير موجود</Text>
             </SafeAreaView>
         );
     }
@@ -48,17 +49,17 @@ export default function ProductDetail() {
 
     const handleDelete = () => {
         Alert.alert(
-            'Delete this batch?',
-            `This will permanently remove ${batch.products?.name} (LOT ${batch.lot}) from inventory.`,
+            'حذف هذه الدفعة؟',
+            `سيتم حذف ${batch.products?.name} (${batch.lot}) نهائيًا من المخزون.`,
             [
-                { text: 'Cancel', style: 'cancel' },
+                { text: 'إلغاء', style: 'cancel' },
                 {
-                    text: 'Delete',
+                    text: 'حذف',
                     style: 'destructive',
                     onPress: async () => {
                         const { error } = await supabase.from('stock_batches').delete().eq('id', batch.id);
                         if (error) {
-                            Alert.alert('Error', error.message);
+                            Alert.alert('خطأ', error.message);
                         } else {
                             router.back();
                         }
@@ -88,7 +89,7 @@ export default function ProductDetail() {
         setSubmitting(false);
 
         if (error) {
-            Alert.alert('Error', error.message);
+            Alert.alert('خطأ', error.message);
             return;
         }
         setEditVisible(false);
@@ -99,6 +100,7 @@ export default function ProductDetail() {
 
     const openTransferModal = () => {
         setTransferQuantity(String(batch.quantity));
+        setTransferNote('');
         setTransferTargetWarehouseId(otherWarehouses[0]?.id ?? null);
         setTransferVisible(true);
     };
@@ -108,7 +110,7 @@ export default function ProductDetail() {
 
         const qty = parseInt(transferQuantity, 10) || 0;
         if (qty <= 0 || qty > batch.quantity) {
-            Alert.alert('Invalid quantity', `Enter a number between 1 and ${batch.quantity}.`);
+            Alert.alert('كمية غير صالحة', `أدخل رقمًا بين 1 و ${batch.quantity}.`);
             return;
         }
 
@@ -120,11 +122,12 @@ export default function ProductDetail() {
             movement_type: 'transfer',
             from_warehouse_id: selectedWarehouse.id,
             to_warehouse_id: transferTargetWarehouseId,
+            note: transferNote.trim() || null,
         });
 
         if (movementError) {
             setSubmitting(false);
-            Alert.alert('Error', movementError.message);
+            Alert.alert('خطأ', movementError.message);
             return;
         }
 
@@ -144,45 +147,46 @@ export default function ProductDetail() {
         <SafeAreaView className="flex-1 bg-indigo-50">
             <ScrollView contentContainerClassName="p-4 gap-4">
                 <View className="bg-white rounded-xl border border-slate-200 p-5 gap-4">
-                    <Text className="text-2xl font-bold">{batch.products?.name}</Text>
+                    <Text className="text-2xl font-bold text-right">{batch.products?.name}</Text>
                     {location && (
-                        <View className="flex-row items-center gap-2 bg-indigo-50 rounded-lg px-3 py-2">
+                        <View className="flex-row items-center justify-center gap-2 bg-indigo-50 rounded-lg px-3 py-2">
                             <MapPin size={16} color="#4338ca" />
                             <Text className="text-sm text-indigo-800">
                                 {location.warehouseName} · {location.sectionName} · {location.floorName}
                             </Text>
                         </View>
                     )}
-
-                    <View className="gap-3">
-                        <View className="flex-row items-center gap-3">
-                            <Layers size={18} color="#4338ca" />
-                            <View>
-                                <Text className="text-slate-400 text-xs">DCI</Text>
-                                <Text className="text-base text-slate-800">{batch.products?.dci}</Text>
+                    <View className={"flex-row"}>
+                        <View className="flex-1 gap-3">
+                            <View className="flex-row items-center gap-3">
+                                <Layers size={18} color="#4338ca" />
+                                <View>
+                                    <Text className="text-slate-600 text-xs text-left">DCI</Text>
+                                    <Text className="text-base text-slate-800 text-right">{batch.products?.dci}</Text>
+                                </View>
                             </View>
-                        </View>
 
-                        <View className="flex-row items-center gap-3">
-                            <Hash size={18} color="#4338ca" />
-                            <View>
-                                <Text className="text-slate-400 text-xs">LOT</Text>
-                                <Text className="text-base text-slate-800">{batch.lot}</Text>
+                            <View className="flex-row items-center gap-3">
+                                <Hash size={18} color="#4338ca" />
+                                <View>
+                                    <Text className="text-slate-600 text-xs text-left">LOT</Text>
+                                    <Text className="text-base text-slate-800 text-right">{batch.lot}</Text>
+                                </View>
                             </View>
-                        </View>
 
-                        <View className="flex-row items-center gap-3">
-                            <Calendar size={18} color="#4338ca" />
-                            <View>
-                                <Text className="text-slate-400 text-xs">Expiry date</Text>
-                                <Text className="text-base text-slate-800">{batch.expiry_date}</Text>
+                            <View className="flex-row items-center gap-3">
+                                <Calendar size={18} color="#4338ca" />
+                                <View>
+                                    <Text className="text-slate-600 text-sm text-left">تاريخ الانتهاء</Text>
+                                    <Text className="text-base text-slate-800 text-right">{batch.expiry_date}</Text>
+                                </View>
                             </View>
-                        </View>
-                    </View>
 
-                    <View className="border-t border-slate-100 pt-4">
-                        <Text className="text-slate-400 text-xs">Quantity</Text>
-                        <Text className="text-3xl font-bold text-indigo-700">{batch.quantity}</Text>
+                        </View>
+                        <View className="flex-col justify-center items-center flex-1 border-t  border-slate-100 pt-4 ">
+                            <Text className="text-slate-600 text-xl text-left">الكمية</Text>
+                            <Text className="text-5xl font-bold text-indigo-700 text-left">{batch.quantity}</Text>
+                        </View>
                     </View>
                 </View>
 
@@ -192,7 +196,7 @@ export default function ProductDetail() {
                         className="flex-row items-center justify-center gap-2 bg-white border border-slate-200 rounded-xl py-4"
                     >
                         <Pencil size={18} color="#4338ca" />
-                        <Text className="text-indigo-700 font-medium text-base">Edit</Text>
+                        <Text className="text-indigo-700 font-medium text-base">تعديل</Text>
                     </Pressable>
 
                     <Pressable
@@ -200,7 +204,7 @@ export default function ProductDetail() {
                         className="flex-row items-center justify-center gap-2 bg-white border border-slate-200 rounded-xl py-4"
                     >
                         <ArrowLeftRight size={18} color="#4338ca" />
-                        <Text className="text-indigo-700 font-medium text-base">Transfer</Text>
+                        <Text className="text-indigo-700 font-medium text-base">نقل</Text>
                     </Pressable>
 
                     <Pressable
@@ -208,7 +212,7 @@ export default function ProductDetail() {
                         className="flex-row items-center justify-center gap-2 bg-red-50 border border-red-200 rounded-xl py-4"
                     >
                         <Trash2 size={18} color="#dc2626" />
-                        <Text className="text-red-600 font-medium text-base">Delete</Text>
+                        <Text className="text-red-600 font-medium text-base">حذف</Text>
                     </Pressable>
                 </View>
             </ScrollView>
@@ -217,16 +221,16 @@ export default function ProductDetail() {
                 <View className="flex-1 justify-end bg-black/40">
                     <View className="bg-white rounded-t-2xl p-5 gap-4">
                         <View className="flex-row items-center justify-between">
-                            <Text className="text-lg font-bold">Edit batch</Text>
+                            <Text className="text-lg font-bold">تعديل الدفعة</Text>
                             <Pressable onPress={() => setEditVisible(false)}>
                                 <X size={22} color="#64748b" />
                             </Pressable>
                         </View>
 
                         <View className="gap-1">
-                            <Text className="text-slate-500 text-xs">Quantity</Text>
+                            <Text className="text-slate-600 text-sm text-left">الكمية</Text>
                             <TextInput
-                                className="border border-slate-300 rounded-lg px-3 py-2 text-base"
+                                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
                                 keyboardType="numeric"
                                 value={editQuantity}
                                 onChangeText={setEditQuantity}
@@ -234,18 +238,18 @@ export default function ProductDetail() {
                         </View>
 
                         <View className="gap-1">
-                            <Text className="text-slate-500 text-xs">LOT</Text>
+                            <Text className="text-slate-600 text-xs text-left">رقم اللوت</Text>
                             <TextInput
-                                className="border border-slate-300 rounded-lg px-3 py-2 text-base"
+                                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
                                 value={editLot}
                                 onChangeText={setEditLot}
                             />
                         </View>
 
                         <View className="gap-1">
-                            <Text className="text-slate-500 text-xs">Expiry date (YYYY-MM-DD)</Text>
+                            <Text className="text-slate-600 text-xs text-left">تاريخ الانتهاء (YYYY-MM-DD)</Text>
                             <TextInput
-                                className="border border-slate-300 rounded-lg px-3 py-2 text-base"
+                                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
                                 value={editExpiry}
                                 onChangeText={setEditExpiry}
                                 placeholder="2027-01-01"
@@ -257,7 +261,7 @@ export default function ProductDetail() {
                             disabled={submitting}
                             className="bg-indigo-700 rounded-xl py-3 items-center mt-2"
                         >
-                            <Text className="text-white font-semibold">{submitting ? 'Saving...' : 'Save changes'}</Text>
+                            <Text className="text-white font-semibold">{submitting ? 'جارٍ الحفظ...' : 'حفظ التغييرات'}</Text>
                         </Pressable>
                     </View>
                 </View>
@@ -267,20 +271,20 @@ export default function ProductDetail() {
                 <View className="flex-1 justify-end bg-black/40">
                     <View className="bg-white rounded-t-2xl p-5 gap-4">
                         <View className="flex-row items-center justify-between">
-                            <Text className="text-lg font-bold">Transfer batch</Text>
+                            <Text className="text-lg font-bold">نقل الدفعة</Text>
                             <Pressable onPress={() => setTransferVisible(false)}>
                                 <X size={22} color="#64748b" />
                             </Pressable>
                         </View>
 
-                        <Text className="text-slate-500 text-sm">
-                            Available: {batch.quantity} units
+                        <Text className="text-slate-500 text-sm text-right">
+                            المتاح: {batch.quantity} وحدة
                         </Text>
 
                         <View className="gap-1">
-                            <Text className="text-slate-500 text-xs">Quantity to transfer</Text>
+                            <Text className="text-slate-500 text-xs text-right">الكمية المراد نقلها</Text>
                             <TextInput
-                                className="border border-slate-300 rounded-lg px-3 py-2 text-base"
+                                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
                                 keyboardType="numeric"
                                 value={transferQuantity}
                                 onChangeText={setTransferQuantity}
@@ -288,7 +292,7 @@ export default function ProductDetail() {
                         </View>
 
                         <View className="gap-2">
-                            <Text className="text-slate-500 text-xs">Destination warehouse</Text>
+                            <Text className="text-slate-500 text-xs text-right">المستودع الوجهة</Text>
                             {otherWarehouses.map((w) => (
                                 <Pressable
                                     key={w.id}
@@ -296,22 +300,28 @@ export default function ProductDetail() {
                                     className={`flex-row items-center justify-between border rounded-lg px-3 py-3 ${transferTargetWarehouseId === w.id ? 'border-indigo-600 bg-indigo-50' : 'border-slate-300'
                                         }`}
                                 >
-                                    <Text className="text-base">{w.name}</Text>
+                                    <Text className="text-base text-right">{w.name}</Text>
                                 </Pressable>
                             ))}
                         </View>
 
-                        <Text className="text-xs text-slate-400">
-                            Note: this removes stock from the current warehouse but does not automatically add it
-                            to the destination — it only logs the transfer in history.
-                        </Text>
+                        <View className="gap-1">
+                            <Text className="text-slate-500 text-xs text-right">ملاحظة (اختياري)</Text>
+                            <TextInput
+                                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
+                                value={transferNote}
+                                onChangeText={setTransferNote}
+                                placeholder=""
+                                multiline
+                            />
+                        </View>
 
                         <Pressable
                             onPress={handleConfirmTransfer}
                             disabled={submitting || !transferTargetWarehouseId}
                             className="bg-indigo-700 rounded-xl py-3 items-center mt-2"
                         >
-                            <Text className="text-white font-semibold">{submitting ? 'Transferring...' : 'Confirm transfer'}</Text>
+                            <Text className="text-white font-semibold">{submitting ? 'جارٍ النقل...' : 'تأكيد النقل'}</Text>
                         </Pressable>
                     </View>
                 </View>

@@ -1,5 +1,5 @@
 import { Link, useLocalSearchParams } from 'expo-router';
-import { ChevronRight, Dot, Layers, Package, Plus, X } from 'lucide-react-native';
+import { ChevronLeft, Dot, Layers, Package, Plus, X } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert, FlatList, Modal, Pressable, Text, TextInput, View, TouchableHighlight } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -14,7 +14,7 @@ export default function SectionDetail() {
   const [newName, setNewName] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  if (loading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>Loading...</Text></SafeAreaView>;
+  if (loading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>جار التحميل...</Text></SafeAreaView>;
   if (error) return <SafeAreaView className="flex-1 items-center justify-center"><Text>{error}</Text></SafeAreaView>;
 
   const section = selectedWarehouse?.sections.find((s) => s.id === sectionId);
@@ -22,7 +22,7 @@ export default function SectionDetail() {
   if (!section) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center">
-        <Text>Section not found</Text>
+        <Text>القسم غير موجود</Text>
       </SafeAreaView>
     );
   }
@@ -38,7 +38,7 @@ export default function SectionDetail() {
 
   const handleAddFloor = async () => {
     if (!newName.trim()) {
-      Alert.alert('Missing name', 'Please enter a floor name.');
+      Alert.alert('اسم مفقود', 'يرجى إدخال اسم الطابق.');
       return;
     }
 
@@ -50,7 +50,7 @@ export default function SectionDetail() {
     setSubmitting(false);
 
     if (insertError) {
-      Alert.alert('Error', insertError.message);
+      Alert.alert('خطأ', insertError.message);
       return;
     }
 
@@ -69,18 +69,18 @@ export default function SectionDetail() {
             <View className="flex-row gap-4">
               <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
                 <Package size={20} color="#4338ca" />
-                <Text className="text-2xl font-bold mt-2">{totalItems}</Text>
-                <Text className="text-slate-500 text-sm">Total items</Text>
+                <Text className="text-2xl font-bold mt-2 text-right">{totalItems}</Text>
+                <Text className="text-slate-500 text-sm text-right">إجمالي المنتجات</Text>
               </View>
               <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
                 <Layers size={20} color="#4338ca" />
-                <Text className="text-2xl font-bold mt-2">{section.floors.length}</Text>
-                <Text className="text-slate-500 text-sm">Floors</Text>
+                <Text className="text-2xl font-bold mt-2 text-right">{section.floors.length}</Text>
+                <Text className="text-slate-500 text-sm text-right">الطوابق</Text>
               </View>
             </View>
 
             <View className="flex-row items-center justify-between mt-2 px-1">
-              <Text className="font-semibold text-lg">Floors</Text>
+              <Text className="font-semibold text-lg">الطوابق</Text>
             </View>
           </View>
         }
@@ -92,16 +92,16 @@ export default function SectionDetail() {
               <Pressable className="flex flex-row items-start rounded-xl justify-between px-4 py-5 bg-white">
                 <View className="w-[90%] flex flex-row justify-between items-center gap-2">
                   <View className="flex flex-col">
-                    <Text className="text-lg font-medium">{item.name}</Text>
-                    <Text className="text-sm text-slate-500">Click for more info</Text>
+                    <Text className="text-lg font-medium text-right">{item.name}</Text>
+                    <Text className="text-sm text-slate-500 text-right">اضغط لمزيد من المعلومات</Text>
                   </View>
                   <View className="flex h-full flex-row items-center">
                     <Dot size={34} color="#64748b" />
-                    <Text className="text-slate-600">{floorTotal} items</Text>
+                    <Text className="text-slate-600">{floorTotal} منتج</Text>
                   </View>
                 </View>
                 <View className="w-[10%] h-full flex flex-row justify-end items-center">
-                  <ChevronRight size={26} color="#4338ca" />
+                  <ChevronLeft size={26} color="#4338ca" />
                 </View>
               </Pressable>
             </Link>
@@ -120,19 +120,19 @@ export default function SectionDetail() {
         <View className="flex-1 justify-end bg-black/40">
           <View className="bg-white rounded-t-2xl p-5 gap-4">
             <View className="flex-row items-center justify-between">
-              <Text className="text-lg font-bold">New floor</Text>
+              <Text className="text-lg font-bold">طابق جديد</Text>
               <Pressable onPress={() => setAddVisible(false)}>
                 <X size={22} color="#64748b" />
               </Pressable>
             </View>
 
             <View className="gap-1">
-              <Text className="text-slate-500 text-xs">Floor name</Text>
+              <Text className="text-slate-500 text-xs text-right">اسم الطابق</Text>
               <TextInput
-                className="border border-slate-300 rounded-lg px-3 py-2 text-base"
+                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
                 value={newName}
                 onChangeText={setNewName}
-                placeholder="Floor 4"
+                placeholder="الطابق 4"
               />
             </View>
 
@@ -141,7 +141,7 @@ export default function SectionDetail() {
               disabled={submitting}
               className="bg-indigo-700 rounded-xl py-3 items-center mt-2"
             >
-              <Text className="text-white font-semibold">{submitting ? 'Adding...' : 'Add floor'}</Text>
+              <Text className="text-white font-semibold">{submitting ? 'جارٍ الإضافة...' : 'إضافة طابق'}</Text>
             </Pressable>
           </View>
         </View>

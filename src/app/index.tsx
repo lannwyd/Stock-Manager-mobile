@@ -82,13 +82,13 @@ export default function Home() {
                 <View className="flex-row gap-4">
                   <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
                     <Package size={20} color="#4338ca" />
-                    <Text className="text-2xl font-bold mt-2 text-right">{totalProducts}</Text>
-                    <Text className="text-slate-700 text-md text-right">إجمالي المنتجات</Text>
+                    <Text className="text-2xl font-bold mt-2 text-left">{totalProducts}</Text>
+                    <Text className="text-slate-700 text-md text-left">إجمالي المنتجات</Text>
                   </View>
                   <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
                     <Layers size={20} color="#4338ca" />
-                    <Text className="text-2xl font-bold mt-2 text-right">{sections.length}</Text>
-                    <Text className="text-slate-700 text-md text-right">الأقسام</Text>
+                    <Text className="text-2xl font-bold mt-2 text-left">{sections.length}</Text>
+                    <Text className="text-slate-700 text-md text-left">الأقسام</Text>
                   </View>
                 </View>
 
@@ -156,7 +156,7 @@ export default function Home() {
 
             {isSearching && (
               <Text className="font-semibold text-lg px-1 text-right">
-                {searchResults.length} نتيجة
+                {searchResults.length} نتائج البحث
               </Text>
             )}
           </View>

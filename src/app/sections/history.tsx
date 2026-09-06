@@ -1,0 +1,67 @@
+import { useHistory } from '@/hooks/useHistory';
+import { Search } from 'lucide-react-native';
+import { useMemo, useState } from 'react';
+import { FlatList, Text, TextInput, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+export default function HistoryScreen() {
+    const { historyItems, loading, error } = useHistory();
+    const [search, setSearch] = useState('');
+
+    const filteredHistory = useMemo(() => {
+        if (!search.trim()) return historyItems;
+        const query = search.trim().toLowerCase();
+        return historyItems.filter((item) =>
+            item.stock_batches?.products?.name?.toLowerCase().includes(query)
+        );
+    }, [historyItems, search]);
+
+    if (loading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>جار التحميل...</Text></SafeAreaView>;
+    if (error) return <SafeAreaView className="flex-1 items-center justify-center"><Text>{error}</Text></SafeAreaView>;
+
+    return (
+        <SafeAreaView className="flex-1 bg-indigo-50 p-4">
+            <FlatList
+                data={filteredHistory}
+                keyExtractor={(item) => item.id}
+                contentContainerClassName="gap-4"
+                ListHeaderComponent={
+                    <View className="gap-4">
+                        <Text className="text-2xl font-bold text-right">السجل</Text>
+
+                        <View className="flex-row items-center bg-white w-full h-14 rounded-xl border border-slate-400 px-3">
+                            <Search size={20} color="#64748b" />
+                            <TextInput
+                                className="flex-1 mr-2 h-full text-base text-slate-800 text-right"
+                                placeholder="ابحث في السجل..."
+                                placeholderTextColor="#888"
+                                value={search}
+                                onChangeText={setSearch}
+                                autoCorrect={false}
+                                clearButtonMode="while-editing"
+                            />
+                        </View>
+                    </View>
+                }
+                ListEmptyComponent={
+                    <View className="items-center py-8">
+                        <Text className="text-slate-400">لا توجد سجلات مطابقة</Text>
+                    </View>
+                }
+                renderItem={({ item }) => (
+                    <View className="bg-white px-4 py-3 rounded-xl border border-slate-200">
+                        <Text className="text-base font-medium text-right">
+                            {item.stock_batches?.products?.name ?? 'منتج غير معروف'}
+                        </Text>
+                        <Text className="text-slate-400 text-sm text-right">
+                            {item.from_warehouse?.name ?? 'N/A'} ← {item.to_warehouse?.name ?? 'N/A'} · {item.quantity} منتج · {new Date(item.created_at).toLocaleDateString('ar')}
+                        </Text>
+                        {item.note && (
+                            <Text className="text-slate-400 text-xs text-right mt-1">{item.note}</Text>
+                        )}
+                    </View>
+                )}
+            />
+        </SafeAreaView>
+    );
+}
