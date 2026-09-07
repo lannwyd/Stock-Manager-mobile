@@ -50,14 +50,14 @@ export default function HistoryScreen() {
                 }
                 renderItem={({ item }) => (
                     <View className="bg-white px-4 py-3 rounded-xl border border-slate-200">
-                        <Text className="text-base font-medium text-right">
+                        <Text className="text-lg  font-medium text-right">
                             {item.stock_batches?.products?.name ?? 'منتج غير معروف'}
                         </Text>
-                        <Text className="text-slate-400 text-sm text-right">
+                        <Text className="text-slate-700 text-md text-right">
                             {item.from_warehouse?.name ?? 'N/A'} ← {item.to_warehouse?.name ?? 'N/A'} · {item.quantity} منتج · {new Date(item.created_at).toLocaleDateString('ar')}
                         </Text>
                         {item.note && (
-                            <Text className="text-slate-400 text-xs text-right mt-1">{item.note}</Text>
+                            <Text className="text-slate-700 text-sm text-right mt-1">{item.note}</Text>
                         )}
                     </View>
                 )}

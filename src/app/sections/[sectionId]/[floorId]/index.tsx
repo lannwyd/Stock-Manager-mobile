@@ -145,13 +145,13 @@ export default function FloorDetail() {
             <View className="flex-row gap-4">
               <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
                 <Package size={20} color="#4338ca" />
-                <Text className="text-2xl font-bold mt-2 text-right">{totalItems}</Text>
-                <Text className="text-slate-500 text-sm text-right">إجمالي المنتجات</Text>
+                <Text className="text-2xl font-bold mt-2 text-left">{totalItems}</Text>
+                <Text className="text-slate-700 text-md text-left">إجمالي المنتجات</Text>
               </View>
               <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
                 <Layers size={20} color="#4338ca" />
-                <Text className="text-2xl font-bold mt-2 text-right">{totalProducts}</Text>
-                <Text className="text-slate-500 text-sm text-right">المنتجات</Text>
+                <Text className="text-2xl font-bold mt-2 text-left">{totalProducts}</Text>
+                <Text className="text-slate-700 text-md text-left">المنتجات</Text>
               </View>
             </View>
 
@@ -171,7 +171,7 @@ export default function FloorDetail() {
                 <Text className="text-sm text-slate-500 text-right">{item.products?.dci}</Text>
               </View>
               <View className="flex-row items-center gap-2">
-                <Text className="text-slate-600">{item.quantity} منتج</Text>
+                <Text className="text-slate-800">{item.quantity} علبة</Text>
                 <ChevronLeft size={20} color="#4338ca" />
               </View>
             </Pressable>

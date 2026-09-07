@@ -1,10 +1,10 @@
+import { useWarehouseContext } from '@/context/warehouseContext';
+import { supabase } from '@/lib/supabase';
 import { Link, useLocalSearchParams } from 'expo-router';
 import { ChevronLeft, Dot, Layers, Package, Plus, X } from 'lucide-react-native';
 import { useState } from 'react';
-import { Alert, FlatList, Modal, Pressable, Text, TextInput, View, TouchableHighlight } from 'react-native';
+import { Alert, FlatList, Modal, Pressable, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useWarehouseContext } from '@/context/warehouseContext';
-import { supabase } from '@/lib/supabase';
 
 export default function SectionDetail() {
   const { sectionId } = useLocalSearchParams();
@@ -69,13 +69,13 @@ export default function SectionDetail() {
             <View className="flex-row gap-4">
               <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
                 <Package size={20} color="#4338ca" />
-                <Text className="text-2xl font-bold mt-2 text-right">{totalItems}</Text>
-                <Text className="text-slate-500 text-sm text-right">إجمالي المنتجات</Text>
+                <Text className="text-2xl font-bold mt-2 text-left">{totalItems}</Text>
+                <Text className="text-slate-700 text-md text-left">إجمالي المنتجات</Text>
               </View>
               <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
                 <Layers size={20} color="#4338ca" />
-                <Text className="text-2xl font-bold mt-2 text-right">{section.floors.length}</Text>
-                <Text className="text-slate-500 text-sm text-right">الطوابق</Text>
+                <Text className="text-2xl font-bold mt-2 text-left">{section.floors.length}</Text>
+                <Text className="text-slate-700 text-md text-left">الطوابق</Text>
               </View>
             </View>
 
@@ -85,19 +85,21 @@ export default function SectionDetail() {
           </View>
         }
         renderItem={({ item }) => {
-          const floorTotal = (item.stock_batches ?? []).reduce((sum, batch) => sum + (batch.quantity ?? 0), 0);
+          const distinctProductCount = new Set(
+            (item.stock_batches ?? []).map((batch) => batch.products?.name)
+          ).size;
 
           return (
             <Link href={`/sections/${sectionId}/${item.id}`} asChild>
               <Pressable className="flex flex-row items-start rounded-xl justify-between px-4 py-5 bg-white">
                 <View className="w-[90%] flex flex-row justify-between items-center gap-2">
                   <View className="flex flex-col">
-                    <Text className="text-lg font-medium text-right">{item.name}</Text>
-                    <Text className="text-sm text-slate-500 text-right">اضغط لمزيد من المعلومات</Text>
+                    <Text className="text-lg font-medium text-left ">{item.name}</Text>
+                    <Text className="text-sm text-slate-700 text-right">اضغط لمزيد من المعلومات</Text>
                   </View>
                   <View className="flex h-full flex-row items-center">
                     <Dot size={34} color="#64748b" />
-                    <Text className="text-slate-600">{floorTotal} منتج</Text>
+                    <Text className="text-slate-700">{distinctProductCount} أدوية</Text>
                   </View>
                 </View>
                 <View className="w-[10%] h-full flex flex-row justify-end items-center">

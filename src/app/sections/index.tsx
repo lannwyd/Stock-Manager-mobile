@@ -1,16 +1,16 @@
 import { useWarehouseContext } from '@/context/warehouseContext';
 import { Link } from 'expo-router';
-import { ChevronRight, Dot, Layers, Package, Plus, X } from 'lucide-react-native';
+import { ChevronLeft, Dot, Layers, Package, Plus, X } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert, FlatList, Modal, Pressable, Text, TextInput, View, TouchableHighlight } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '@/lib/supabase';
 
 const COLOR_OPTIONS = [
-  { label: 'Orange', value: 'bg-orange-100' },
-  { label: 'Yellow', value: 'bg-yellow-100' },
-  { label: 'Blue', value: 'bg-blue-100' },
-  { label: 'Green', value: 'bg-green-100' },
+  { label: 'برتقالي', value: 'bg-orange-100' },
+  { label: 'أصفر', value: 'bg-yellow-100' },
+  { label: 'أزرق', value: 'bg-blue-100' },
+  { label: 'أخضر', value: 'bg-green-100' },
 ];
 
 export default function Sections() {
@@ -21,15 +21,18 @@ export default function Sections() {
   const [newColor, setNewColor] = useState(COLOR_OPTIONS[0].value);
   const [submitting, setSubmitting] = useState(false);
 
-  if (loading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>Loading...</Text></SafeAreaView>;
+  if (loading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>جار التحميل...</Text></SafeAreaView>;
   if (error) return <SafeAreaView className="flex-1 items-center justify-center"><Text>{error}</Text></SafeAreaView>;
 
   const sections = selectedWarehouse?.sections ?? [];
-  const totalProducts = sections.reduce((sum, section) => {
-    return sum + (section.floors ?? []).reduce((fSum, floor) => {
-      return fSum + (floor.stock_batches ?? []).reduce((bSum, batch) => bSum + (batch.quantity ?? 0), 0);
-    }, 0);
-  }, 0);
+
+  const totalProducts = new Set(
+    sections.flatMap((section) =>
+      (section.floors ?? []).flatMap((floor) =>
+        (floor.stock_batches ?? []).map((batch) => batch.products?.name)
+      )
+    )
+  ).size;
 
   const openAddModal = () => {
     setNewName('');
@@ -39,7 +42,7 @@ export default function Sections() {
 
   const handleAddSection = async () => {
     if (!newName.trim()) {
-      Alert.alert('Missing name', 'Please enter a section name.');
+      Alert.alert('اسم مفقود', 'يرجى إدخال اسم القسم.');
       return;
     }
     if (!selectedWarehouse) return;
@@ -53,7 +56,7 @@ export default function Sections() {
     setSubmitting(false);
 
     if (insertError) {
-      Alert.alert('Error', insertError.message);
+      Alert.alert('خطأ', insertError.message);
       return;
     }
 
@@ -70,27 +73,29 @@ export default function Sections() {
         ListHeaderComponent={
           <View className="gap-4">
             <View className="flex-row gap-4">
-              <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
+              <View className="flex-1 bg-white rounded-xl border border-slate-200 py-4 px-6">
                 <Package size={20} color="#4338ca" />
-                <Text className="text-2xl font-bold mt-2">{totalProducts}</Text>
-                <Text className="text-slate-500 text-sm">Total items</Text>
+                <Text className="text-2xl font-bold mt-2 text-left">{totalProducts}</Text>
+                <Text className="text-slate-700 text-md text-left">إجمالي الأدوية</Text>
               </View>
-              <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
+              <View className="flex-1 bg-white rounded-xl border border-slate-200 py-4 px-6">
                 <Layers size={20} color="#4338ca" />
-                <Text className="text-2xl font-bold mt-2">{sections.length}</Text>
-                <Text className="text-slate-500 text-sm">Sections</Text>
+                <Text className="text-2xl font-bold mt-2 text-left">{sections.length}</Text>
+                <Text className="text-slate-700 text-md text-left">الأقسام</Text>
               </View>
             </View>
 
             <View className="flex-row items-center justify-between mt-2 px-1">
-              <Text className="font-semibold text-lg">Sections</Text>
+              <Text className="font-semibold text-lg">الأقسام</Text>
             </View>
           </View>
         }
         renderItem={({ item }) => {
-          const sectionTotal = (item.floors ?? []).reduce((fSum, floor) => {
-            return fSum + (floor.stock_batches ?? []).reduce((bSum, batch) => bSum + (batch.quantity ?? 0), 0);
-          }, 0);
+          const distinctProductCount = new Set(
+            (item.floors ?? []).flatMap((floor) =>
+              (floor.stock_batches ?? []).map((batch) => batch.products?.name)
+            )
+          ).size;
 
           return (
             <Link href={`/sections/${item.id}`} asChild>
@@ -99,16 +104,16 @@ export default function Sections() {
               >
                 <View className="w-[90%] flex flex-row justify-between items-center gap-2">
                   <View className="flex flex-col">
-                    <Text className="text-lg font-medium">{item.name}</Text>
-                    <Text className="text-sm text-slate-500">Click for more info</Text>
+                    <Text className="text-lg font-medium text-left">{item.name}</Text>
+                    <Text className="text-sm text-slate-700 text-right">اضغط لمزيد من المعلومات</Text>
                   </View>
                   <View className="flex h-full flex-row items-center">
                     <Dot size={34} color="#64748b" />
-                    <Text className="text-slate-600">{sectionTotal} items</Text>
+                    <Text className="text-slate-800">{distinctProductCount} دواء</Text>
                   </View>
                 </View>
                 <View className="w-[10%] h-full flex flex-row justify-end items-center">
-                  <ChevronRight size={26} color="#4338ca" />
+                  <ChevronLeft size={26} color="#4338ca" />
                 </View>
               </Pressable>
             </Link>
@@ -127,24 +132,24 @@ export default function Sections() {
         <View className="flex-1 justify-end bg-black/40">
           <View className="bg-white rounded-t-2xl p-5 gap-4">
             <View className="flex-row items-center justify-between">
-              <Text className="text-lg font-bold">New section</Text>
+              <Text className="text-lg font-bold">قسم جديد</Text>
               <Pressable onPress={() => setAddVisible(false)}>
                 <X size={22} color="#64748b" />
               </Pressable>
             </View>
 
             <View className="gap-1">
-              <Text className="text-slate-500 text-xs">Section name</Text>
+              <Text className="text-slate-500 text-xs text-right">اسم القسم</Text>
               <TextInput
-                className="border border-slate-300 rounded-lg px-3 py-2 text-base"
+                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
                 value={newName}
                 onChangeText={setNewName}
-                placeholder="Orange rack"
+                placeholder="الرف البرتقالي"
               />
             </View>
 
             <View className="gap-2">
-              <Text className="text-slate-500 text-xs">Color</Text>
+              <Text className="text-slate-500 text-xs text-right">اللون</Text>
               <View className="flex-row gap-2">
                 {COLOR_OPTIONS.map((c) => (
                   <Pressable
@@ -164,7 +169,7 @@ export default function Sections() {
               disabled={submitting}
               className="bg-indigo-700 rounded-xl py-3 items-center mt-2"
             >
-              <Text className="text-white font-semibold">{submitting ? 'Adding...' : 'Add section'}</Text>
+              <Text className="text-white font-semibold">{submitting ? 'جارٍ الإضافة...' : 'إضافة قسم'}</Text>
             </Pressable>
           </View>
         </View>

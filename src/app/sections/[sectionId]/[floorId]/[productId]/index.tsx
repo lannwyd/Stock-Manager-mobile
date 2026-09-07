@@ -161,24 +161,24 @@ export default function ProductDetail() {
                             <View className="flex-row items-center gap-3">
                                 <Layers size={18} color="#4338ca" />
                                 <View>
-                                    <Text className="text-slate-600 text-xs text-left">DCI</Text>
-                                    <Text className="text-base text-slate-800 text-right">{batch.products?.dci}</Text>
+                                    <Text className="text-slate-800 text-xs text-left">DCI</Text>
+                                    <Text className="text-base text-slate-800 text-left">{batch.products?.dci}</Text>
                                 </View>
                             </View>
 
                             <View className="flex-row items-center gap-3">
                                 <Hash size={18} color="#4338ca" />
                                 <View>
-                                    <Text className="text-slate-600 text-xs text-left">LOT</Text>
-                                    <Text className="text-base text-slate-800 text-right">{batch.lot}</Text>
+                                    <Text className="text-slate-800 text-xs text-left">LOT</Text>
+                                    <Text className="text-base text-slate-800 text-left">{batch.lot}</Text>
                                 </View>
                             </View>
 
                             <View className="flex-row items-center gap-3">
                                 <Calendar size={18} color="#4338ca" />
                                 <View>
-                                    <Text className="text-slate-600 text-sm text-left">تاريخ الانتهاء</Text>
-                                    <Text className="text-base text-slate-800 text-right">{batch.expiry_date}</Text>
+                                    <Text className="text-slate-800 text-sm text-left">تاريخ نهاية الصلاحية </Text>
+                                    <Text className="text-base text-slate-800 text-left">{batch.expiry_date}</Text>
                                 </View>
                             </View>
 
@@ -221,14 +221,14 @@ export default function ProductDetail() {
                 <View className="flex-1 justify-end bg-black/40">
                     <View className="bg-white rounded-t-2xl p-5 gap-4">
                         <View className="flex-row items-center justify-between">
-                            <Text className="text-lg font-bold">تعديل الدفعة</Text>
+                            <Text className="text-lg font-bold">تعديل المنتج</Text>
                             <Pressable onPress={() => setEditVisible(false)}>
                                 <X size={22} color="#64748b" />
                             </Pressable>
                         </View>
 
                         <View className="gap-1">
-                            <Text className="text-slate-600 text-sm text-left">الكمية</Text>
+                            <Text className="text-slate-700 text-md text-left">الكمية</Text>
                             <TextInput
                                 className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
                                 keyboardType="numeric"
@@ -238,7 +238,7 @@ export default function ProductDetail() {
                         </View>
 
                         <View className="gap-1">
-                            <Text className="text-slate-600 text-xs text-left">رقم اللوت</Text>
+                            <Text className="text-slate-700 text-md text-left">LOT </Text>
                             <TextInput
                                 className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
                                 value={editLot}
@@ -247,7 +247,7 @@ export default function ProductDetail() {
                         </View>
 
                         <View className="gap-1">
-                            <Text className="text-slate-600 text-xs text-left">تاريخ الانتهاء (YYYY-MM-DD)</Text>
+                            <Text className="text-slate-700 text-md text-left">تاريخ نهاية الصلاحية (YYYY-MM-DD)</Text>
                             <TextInput
                                 className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
                                 value={editExpiry}
@@ -277,12 +277,12 @@ export default function ProductDetail() {
                             </Pressable>
                         </View>
 
-                        <Text className="text-slate-500 text-sm text-right">
+                        <Text className="text-slate-700 text-md text-left">
                             المتاح: {batch.quantity} وحدة
                         </Text>
 
                         <View className="gap-1">
-                            <Text className="text-slate-500 text-xs text-right">الكمية المراد نقلها</Text>
+                            <Text className="text-slate-700 text-md text-left">الكمية المراد نقلها</Text>
                             <TextInput
                                 className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
                                 keyboardType="numeric"
@@ -292,7 +292,7 @@ export default function ProductDetail() {
                         </View>
 
                         <View className="gap-2">
-                            <Text className="text-slate-500 text-xs text-right">المستودع الوجهة</Text>
+                            <Text className="text-slate-700 text-md text-left">المستودع الوجهة</Text>
                             {otherWarehouses.map((w) => (
                                 <Pressable
                                     key={w.id}
@@ -306,7 +306,7 @@ export default function ProductDetail() {
                         </View>
 
                         <View className="gap-1">
-                            <Text className="text-slate-500 text-xs text-right">ملاحظة (اختياري)</Text>
+                            <Text className="text-slate-700 text-md text-left">ملاحظة (اختياري)</Text>
                             <TextInput
                                 className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
                                 value={transferNote}
