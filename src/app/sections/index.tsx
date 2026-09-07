@@ -1,10 +1,10 @@
 import { useWarehouseContext } from '@/context/warehouseContext';
-import { Link } from 'expo-router';
+import { supabase } from '@/lib/supabase';
+import { Link, useRouter } from 'expo-router';
 import { ChevronLeft, Dot, Layers, Package, Plus, X } from 'lucide-react-native';
 import { useState } from 'react';
-import { Alert, FlatList, Modal, Pressable, Text, TextInput, View, TouchableHighlight } from 'react-native';
+import { Alert, FlatList, Modal, Pressable, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { supabase } from '@/lib/supabase';
 
 const COLOR_OPTIONS = [
   { label: 'برتقالي', value: 'bg-orange-100' },
@@ -15,6 +15,7 @@ const COLOR_OPTIONS = [
 
 export default function Sections() {
   const { selectedWarehouse, loading, error, refresh } = useWarehouseContext();
+  const router = useRouter();
 
   const [addVisible, setAddVisible] = useState(false);
   const [newName, setNewName] = useState('');
@@ -65,6 +66,7 @@ export default function Sections() {
   };
 
   return (
+
     <SafeAreaView className="flex-1 bg-indigo-50 p-4">
       <FlatList
         data={sections}
@@ -72,6 +74,12 @@ export default function Sections() {
         contentContainerClassName="gap-4"
         ListHeaderComponent={
           <View className="gap-4">
+            <View className="flex-row items-center justify-between mt-2 px-1">
+              <Text className="font-semibold text-2xl text-left">الأقسام</Text>
+              <Pressable onPress={() => router.back()} className="p-2">
+                <ChevronLeft size={28} color="#4338ca" />
+              </Pressable>
+            </View>
             <View className="flex-row gap-4">
               <View className="flex-1 bg-white rounded-xl border border-slate-200 py-4 px-6">
                 <Package size={20} color="#4338ca" />
@@ -85,9 +93,7 @@ export default function Sections() {
               </View>
             </View>
 
-            <View className="flex-row items-center justify-between mt-2 px-1">
-              <Text className="font-semibold text-lg">الأقسام</Text>
-            </View>
+
           </View>
         }
         renderItem={({ item }) => {

@@ -105,9 +105,11 @@ export default function Home() {
 
                   <View className="gap-3">
                     {sections.slice(0, 2).map((item) => {
-                      const sectionTotal = (item.floors ?? []).reduce((fSum, floor) => {
-                        return fSum + (floor.stock_batches ?? []).reduce((bSum, batch) => bSum + (batch.quantity ?? 0), 0);
-                      }, 0);
+                      const distinctProductCount = new Set(
+                        (item.floors ?? []).flatMap((floor) =>
+                          (floor.stock_batches ?? []).map((batch) => batch.products?.name)
+                        )
+                      ).size;
 
                       return (
                         <Link key={item.id} href={`/sections/${item.id}`} asChild>
@@ -121,7 +123,7 @@ export default function Home() {
                               </View>
                               <View className="flex h-full flex-row items-center">
                                 <Dot size={34} color="#64748b" />
-                                <Text className="text-slate-600">{sectionTotal} منتج</Text>
+                                <Text className="text-slate-600">{distinctProductCount} منتج</Text>
                               </View>
                             </View>
                             <View className="w-[10%] h-full flex flex-row justify-end items-center">

@@ -2,7 +2,7 @@ import { useWarehouseContext } from '@/context/warehouseContext';
 import { useProduct } from '@/hooks/useProduct';
 import { supabase } from '@/lib/supabase';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ArrowLeftRight, Calendar, Hash, Layers, MapPin, Pencil, Trash2, X } from 'lucide-react-native';
+import { ArrowLeftRight, Calendar, ChevronLeft, Hash, Layers, MapPin, Pencil, Trash2, X } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -147,7 +147,12 @@ export default function ProductDetail() {
         <SafeAreaView className="flex-1 bg-indigo-50">
             <ScrollView contentContainerClassName="p-4 gap-4">
                 <View className="bg-white rounded-xl border border-slate-200 p-5 gap-4">
-                    <Text className="text-2xl font-bold text-right">{batch.products?.name}</Text>
+                    <View className="flex-row items-center justify-between mt-2 px-1">
+                        <Text className="font-semibold text-2xl text-left">{batch.products?.name}</Text>
+                        <Pressable onPress={() => router.back()} className="p-2">
+                            <ChevronLeft size={28} color="#4338ca" />
+                        </Pressable>
+                    </View>
                     {location && (
                         <View className="flex-row items-center justify-center gap-2 bg-indigo-50 rounded-lg px-3 py-2">
                             <MapPin size={16} color="#4338ca" />
@@ -183,7 +188,7 @@ export default function ProductDetail() {
                             </View>
 
                         </View>
-                        <View className="flex-col justify-center items-center flex-1 border-t  border-slate-100 pt-4 ">
+                        <View className="flex-col justify-center items-center flex-1 border-l  border-slate-300 pt-4 ">
                             <Text className="text-slate-600 text-xl text-left">الكمية</Text>
                             <Text className="text-5xl font-bold text-indigo-700 text-left">{batch.quantity}</Text>
                         </View>

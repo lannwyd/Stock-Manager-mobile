@@ -1,5 +1,5 @@
 import { useWarehouseContext } from '@/context/warehouseContext';
-import { Link, useLocalSearchParams } from 'expo-router';
+import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronLeft, Layers, Package, Search, Plus, X } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { Alert, FlatList, Modal, Pressable, Text, TextInput, View, TouchableHighlight } from 'react-native';
@@ -7,6 +7,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '@/lib/supabase';
 
 export default function FloorDetail() {
+
+  const router = useRouter();
   const { sectionId, floorId } = useLocalSearchParams();
   const [search, setSearch] = useState('');
   const { selectedWarehouse, loading, error, refresh } = useWarehouseContext();
@@ -127,7 +129,12 @@ export default function FloorDetail() {
         contentContainerClassName="gap-4"
         ListHeaderComponent={
           <View className="gap-4">
-            <Text className="text-2xl font-bold text-right">{floor.name}</Text>
+            <View className="flex-row items-center justify-between mt-2 px-1">
+              <Text className="font-semibold text-2xl text-left">{floor.name}</Text>
+              <Pressable onPress={() => router.back()} className="p-2">
+                <ChevronLeft size={28} color="#4338ca" />
+              </Pressable>
+            </View>
 
             <View className="flex-row items-center bg-white w-full h-14 rounded-xl border border-slate-400 px-3">
               <Search size={20} color="#64748b" />

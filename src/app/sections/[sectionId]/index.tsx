@@ -1,12 +1,14 @@
 import { useWarehouseContext } from '@/context/warehouseContext';
 import { supabase } from '@/lib/supabase';
-import { Link, useLocalSearchParams } from 'expo-router';
+import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import { ChevronLeft, Dot, Layers, Package, Plus, X } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert, FlatList, Modal, Pressable, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SectionDetail() {
+  const router = useRouter();
+
   const { sectionId } = useLocalSearchParams();
   const { selectedWarehouse, loading, error, refresh } = useWarehouseContext();
 
@@ -66,6 +68,12 @@ export default function SectionDetail() {
         contentContainerClassName="gap-4"
         ListHeaderComponent={
           <View className="gap-4">
+            <View className="flex-row items-center justify-between mt-2 px-1">
+              <Text className="font-semibold text-2xl text-left">الطوابق</Text>
+              <Pressable onPress={() => router.back()} className="p-2">
+                <ChevronLeft size={28} color="#4338ca" />
+              </Pressable>
+            </View>
             <View className="flex-row gap-4">
               <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
                 <Package size={20} color="#4338ca" />
@@ -79,9 +87,7 @@ export default function SectionDetail() {
               </View>
             </View>
 
-            <View className="flex-row items-center justify-between mt-2 px-1">
-              <Text className="font-semibold text-lg">الطوابق</Text>
-            </View>
+
           </View>
         }
         renderItem={({ item }) => {
