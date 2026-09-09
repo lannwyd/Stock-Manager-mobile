@@ -1,10 +1,11 @@
 import { useWarehouseContext } from '@/context/warehouseContext';
-import { Link, useLocalSearchParams, useRouter } from 'expo-router';
-import { ChevronLeft, Layers, Package, Search, Plus, X } from 'lucide-react-native';
-import { useMemo, useState } from 'react';
-import { Alert, FlatList, Modal, Pressable, Text, TextInput, View, TouchableHighlight } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '@/lib/supabase';
+import { Link, useLocalSearchParams, useRouter } from 'expo-router';
+import LottieView from 'lottie-react-native';
+import { ChevronLeft, Layers, Package, Plus, Search, X } from 'lucide-react-native';
+import { useMemo, useState } from 'react';
+import { Alert, FlatList, Modal, Pressable, Text, TextInput, TouchableHighlight, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function FloorDetail() {
 
@@ -37,8 +38,22 @@ export default function FloorDetail() {
     );
   }, [floor, search]);
 
-  if (loading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>جار التحميل...</Text></SafeAreaView>;
-  if (error) return <SafeAreaView className="flex-1 items-center justify-center"><Text>{error}</Text></SafeAreaView>;
+  if (loading) return <SafeAreaView className="flex-1 items-center justify-center">
+    <LottieView
+      source={require('@/assets/animations/chatbot.json')}
+      autoPlay
+      loop
+      style={{ width: 200, height: 200 }}
+    />
+  </SafeAreaView>;
+  if (error) return <SafeAreaView className="flex-1 items-center justify-center">
+    <LottieView
+      source={require('@/assets/animations/Error.json')}
+      autoPlay
+      loop
+      style={{ width: 200, height: 200 }}
+    />
+  </SafeAreaView>;
   if (!floor) {
     return (
       <SafeAreaView className="flex-1 items-center justify-center">

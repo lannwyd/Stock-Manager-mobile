@@ -2,6 +2,7 @@ import { useWarehouseContext } from '@/context/warehouseContext';
 import { useProduct } from '@/hooks/useProduct';
 import { supabase } from '@/lib/supabase';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import LottieView from 'lottie-react-native';
 import { ArrowLeftRight, Calendar, ChevronLeft, Hash, Layers, MapPin, Pencil, Trash2, X } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
@@ -25,8 +26,22 @@ export default function ProductDetail() {
     const [transferTargetWarehouseId, setTransferTargetWarehouseId] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
 
-    if (loading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>جار التحميل...</Text></SafeAreaView>;
-    if (error) return <SafeAreaView className="flex-1 items-center justify-center"><Text>{error}</Text></SafeAreaView>;
+    if (loading) return <SafeAreaView className="flex-1 items-center justify-center">
+        <LottieView
+            source={require('@/assets/animations/chatbot.json')}
+            autoPlay
+            loop
+            style={{ width: 200, height: 200 }}
+        />
+    </SafeAreaView>;
+    if (error) return <SafeAreaView className="flex-1 items-center justify-center">
+        <LottieView
+            source={require('@/assets/animations/Error.json')}
+            autoPlay
+            loop
+            style={{ width: 200, height: 200 }}
+        />
+    </SafeAreaView>;
 
     if (!batch) {
         return (

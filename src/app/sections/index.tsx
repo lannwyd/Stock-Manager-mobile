@@ -1,6 +1,7 @@
 import { useWarehouseContext } from '@/context/warehouseContext';
 import { supabase } from '@/lib/supabase';
 import { Link, useRouter } from 'expo-router';
+import LottieView from 'lottie-react-native';
 import { ChevronLeft, Dot, Layers, Package, Pencil, Plus, Trash2, X } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert, FlatList, Modal, Pressable, Text, TextInput, TouchableHighlight, View } from 'react-native';
@@ -27,8 +28,22 @@ export default function Sections() {
   const [editName, setEditName] = useState('');
   const [editColor, setEditColor] = useState(COLOR_OPTIONS[0].value);
 
-  if (loading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>جار التحميل...</Text></SafeAreaView>;
-  if (error) return <SafeAreaView className="flex-1 items-center justify-center"><Text>{error}</Text></SafeAreaView>;
+  if (loading) return <SafeAreaView className="flex-1 items-center justify-center">
+    <LottieView
+      source={require('@/assets/animations/chatbot.json')}
+      autoPlay
+      loop
+      style={{ width: 200, height: 200 }}
+    />
+  </SafeAreaView>;
+  if (error) return <SafeAreaView className="flex-1 items-center justify-center">
+    <LottieView
+      source={require('@/assets/animations/Error.json')}
+      autoPlay
+      loop
+      style={{ width: 200, height: 200 }}
+    />
+  </SafeAreaView>;
 
   const sections = selectedWarehouse?.sections ?? [];
 

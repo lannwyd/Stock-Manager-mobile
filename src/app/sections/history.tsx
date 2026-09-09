@@ -1,4 +1,5 @@
 import { useHistory } from '@/hooks/useHistory';
+import LottieView from 'lottie-react-native';
 import { Search } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { FlatList, Text, TextInput, View } from 'react-native';
@@ -16,8 +17,22 @@ export default function HistoryScreen() {
         );
     }, [historyItems, search]);
 
-    if (loading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>جار التحميل...</Text></SafeAreaView>;
-    if (error) return <SafeAreaView className="flex-1 items-center justify-center"><Text>{error}</Text></SafeAreaView>;
+    if (loading) return <SafeAreaView className="flex-1 items-center justify-center">
+        <LottieView
+            source={require('@/assets/animations/chatbot.json')}
+            autoPlay
+            loop
+            style={{ width: 200, height: 200 }}
+        />
+    </SafeAreaView>;
+    if (error) return <SafeAreaView className="flex-1 items-center justify-center">
+        <LottieView
+            source={require('@/assets/animations/Error.json')}
+            autoPlay
+            loop
+            style={{ width: 200, height: 200 }}
+        />
+    </SafeAreaView>;
 
     return (
         <SafeAreaView className="flex-1 bg-indigo-50 p-4">

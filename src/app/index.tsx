@@ -2,6 +2,7 @@ import DropdownComponent from '@/components/shared/dropdowncomp';
 import { useWarehouseContext } from '@/context/warehouseContext';
 import { useHistory } from '@/hooks/useHistory';
 import { Link } from 'expo-router';
+import LottieView from 'lottie-react-native';
 import { ChevronLeft, Dot, Layers, Package, Search } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
@@ -36,8 +37,22 @@ export default function Home() {
     );
   }, [allBatches, search]);
 
-  if (warehousesLoading || historyLoading) return <SafeAreaView className="flex-1 items-center justify-center"><Text>جار التحميل...</Text></SafeAreaView>;
-  if (warehousesError || historyError) return <SafeAreaView className="flex-1 items-center justify-center"><Text>حدث خطأ أثناء تحميل البيانات</Text></SafeAreaView>;
+  if (warehousesLoading || historyLoading) return <SafeAreaView className="flex-1 items-center justify-center">
+    <LottieView
+      source={require('@/assets/animations/chatbot.json')}
+      autoPlay
+      loop
+      style={{ width: 200, height: 200 }}
+    />
+  </SafeAreaView>;
+  if (warehousesError || historyError) return <SafeAreaView className="flex-1 items-center justify-center">
+    <LottieView
+      source={require('@/assets/animations/Error.json')}
+      autoPlay
+      loop
+      style={{ width: 200, height: 200 }}
+    />
+    </SafeAreaView>;
 
   const dropdownOptions = warehouses.map((w) => ({ label: w.name, value: w.id }));
   const sections = selectedWarehouse?.sections ?? [];
