@@ -4,15 +4,22 @@ import { useHistory } from '@/hooks/useHistory';
 import { Link } from 'expo-router';
 import LottieView from 'lottie-react-native';
 import { ChevronLeft, Dot, Layers, Package, Search } from 'lucide-react-native';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Home() {
-  const { warehouses, loading: warehousesLoading, error: warehousesError, selectedWarehouseId, setSelectedWarehouseId, selectedWarehouse } = useWarehouseContext();
-  const { historyItems, loading: historyLoading, error: historyError } = useHistory();
+  const { warehouses, loading: warehousesLoading, error: warehousesError, selectedWarehouseId, setSelectedWarehouseId, selectedWarehouse, refresh } = useWarehouseContext();
+  const { historyItems, loading: historyLoading, error: historyError, refetch: refetchHistory } = useHistory();
 
   const [search, setsearch] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([refresh(), refetchHistory()]);
+    setRefreshing(false);
+  }, [refresh, refetchHistory]);
 
   const allBatches = useMemo(() => {
     const sections = selectedWarehouse?.sections ?? [];
@@ -52,7 +59,7 @@ export default function Home() {
       loop
       style={{ width: 200, height: 200 }}
     />
-    </SafeAreaView>;
+  </SafeAreaView>;
 
   const dropdownOptions = warehouses.map((w) => ({ label: w.name, value: w.id }));
   const sections = selectedWarehouse?.sections ?? [];
@@ -71,6 +78,8 @@ export default function Home() {
         data={isSearching ? searchResults : historyItems}
         keyExtractor={(item) => item.id}
         contentContainerClassName="p-4 gap-4"
+        refreshing={refreshing}
+        onRefresh={onRefresh}
         ListHeaderComponent={
           <View className="gap-4">
             <DropdownComponent

@@ -1,13 +1,20 @@
 import { useHistory } from '@/hooks/useHistory';
 import LottieView from 'lottie-react-native';
 import { Search } from 'lucide-react-native';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { FlatList, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HistoryScreen() {
-    const { historyItems, loading, error } = useHistory();
+    const { historyItems, loading, error, refetch } = useHistory();
     const [search, setSearch] = useState('');
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        await refetch();
+        setRefreshing(false);
+    }, [refetch]);
 
     const filteredHistory = useMemo(() => {
         if (!search.trim()) return historyItems;
@@ -40,6 +47,8 @@ export default function HistoryScreen() {
                 data={filteredHistory}
                 keyExtractor={(item) => item.id}
                 contentContainerClassName="gap-4"
+                refreshing={refreshing}
+                onRefresh={onRefresh}
                 ListHeaderComponent={
                     <View className="gap-4">
                         <Text className="text-2xl font-bold text-right">السجل</Text>

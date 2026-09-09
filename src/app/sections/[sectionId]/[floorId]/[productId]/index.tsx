@@ -4,14 +4,14 @@ import { supabase } from '@/lib/supabase';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import LottieView from 'lottie-react-native';
 import { ArrowLeftRight, Calendar, ChevronLeft, Hash, Layers, MapPin, Pencil, Trash2, X } from 'lucide-react-native';
-import { useState } from 'react';
-import { Alert, Modal, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { useCallback, useState } from 'react';
+import { Alert, Modal, Pressable, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ProductDetail() {
     const { productId } = useLocalSearchParams();
     const { product: batch, loading, error, refetch } = useProduct(productId as string);
-    const { warehouses, selectedWarehouse } = useWarehouseContext();
+    const { warehouses, selectedWarehouse, refresh } = useWarehouseContext();
     const router = useRouter();
 
     const [editVisible, setEditVisible] = useState(false);
@@ -25,6 +25,14 @@ export default function ProductDetail() {
     const [transferNote, setTransferNote] = useState('');
     const [transferTargetWarehouseId, setTransferTargetWarehouseId] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
+
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        await Promise.all([refetch(), refresh()]);
+        setRefreshing(false);
+    }, [refetch, refresh]);
 
     if (loading) return <SafeAreaView className="flex-1 items-center justify-center">
         <LottieView
@@ -160,7 +168,10 @@ export default function ProductDetail() {
 
     return (
         <SafeAreaView className="flex-1 bg-indigo-50">
-            <ScrollView contentContainerClassName="p-4 gap-4">
+            <ScrollView
+                contentContainerClassName="p-4 gap-4"
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+            >
                 <View className="bg-white rounded-xl border border-slate-200 p-5 gap-4">
                     <View className="flex-row items-center justify-between mt-2 px-1">
                         <Text className="font-semibold text-2xl text-left">{batch.products?.name}</Text>

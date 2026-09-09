@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { Link, useRouter } from 'expo-router';
 import LottieView from 'lottie-react-native';
 import { ChevronLeft, Dot, Layers, Package, Pencil, Plus, Trash2, X } from 'lucide-react-native';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Alert, FlatList, Modal, Pressable, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -27,6 +27,14 @@ export default function Sections() {
   const [editingSectionId, setEditingSectionId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   const [editColor, setEditColor] = useState(COLOR_OPTIONS[0].value);
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await refresh();
+    setRefreshing(false);
+  }, [refresh]);
 
   if (loading) return <SafeAreaView className="flex-1 items-center justify-center">
     <LottieView
@@ -142,6 +150,8 @@ export default function Sections() {
         data={sections}
         keyExtractor={(item) => item.id}
         contentContainerClassName="gap-4"
+        refreshing={refreshing}
+        onRefresh={onRefresh}
         ListHeaderComponent={
           <View className="gap-4">
             <View className="flex-row items-center justify-between mt-2 px-1">

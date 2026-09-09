@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import LottieView from 'lottie-react-native';
 import { ChevronLeft, Layers, Package, Plus, Search, X } from 'lucide-react-native';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Alert, FlatList, Modal, Pressable, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -13,6 +13,14 @@ export default function FloorDetail() {
   const { sectionId, floorId } = useLocalSearchParams();
   const [search, setSearch] = useState('');
   const { selectedWarehouse, loading, error, refresh } = useWarehouseContext();
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await refresh();
+    setRefreshing(false);
+  }, [refresh]);
 
   const section = selectedWarehouse?.sections.find((s) => s.id === sectionId);
   const floor = section?.floors.find((f) => f.id === floorId);
@@ -142,6 +150,8 @@ export default function FloorDetail() {
         data={filteredBatches}
         keyExtractor={(item) => item.id}
         contentContainerClassName="gap-4"
+        refreshing={refreshing}
+        onRefresh={onRefresh}
         ListHeaderComponent={
           <View className="gap-4">
             <View className="flex-row items-center justify-between mt-2 px-1">
