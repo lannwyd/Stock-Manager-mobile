@@ -158,11 +158,11 @@ export default function FloorDetail() {
               <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
                 <Layers size={20} color="#4338ca" />
                 <Text className="text-2xl font-bold mt-2 text-left">{totalProducts}</Text>
-                <Text className="text-slate-700 text-md text-left">المنتجات</Text>
+                <Text className="text-slate-700 text-md text-left">الأدوية</Text>
               </View>
             </View>
 
-            <Text className="font-semibold text-lg mt-2 px-1">المنتجات</Text>
+            <Text className="font-semibold text-lg mt-2 px-1">الأدوية</Text>
           </View>
         }
         ListEmptyComponent={
