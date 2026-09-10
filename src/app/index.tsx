@@ -51,6 +51,7 @@ export default function Home() {
       loop
       style={{ width: 200, height: 200 }}
     />
+    <Text className={"font-bold text-xl"}>يتم التحميل ...</Text>
   </SafeAreaView>;
   if (warehousesError || historyError) return <SafeAreaView className="flex-1 items-center justify-center">
     <LottieView

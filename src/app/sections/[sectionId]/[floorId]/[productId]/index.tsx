@@ -41,6 +41,8 @@ export default function ProductDetail() {
             loop
             style={{ width: 200, height: 200 }}
         />
+        <Text className={"font-bold text-xl"}>يتم التحميل ...</Text>
+
     </SafeAreaView>;
     if (error) return <SafeAreaView className="flex-1 items-center justify-center">
         <LottieView

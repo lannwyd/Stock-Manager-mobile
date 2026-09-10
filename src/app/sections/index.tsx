@@ -8,10 +8,17 @@ import { Alert, FlatList, Modal, Pressable, Text, TextInput, TouchableHighlight,
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const COLOR_OPTIONS = [
+  { label: 'أبيض', value: 'bg-white-100' },
   { label: 'برتقالي', value: 'bg-orange-100' },
   { label: 'أصفر', value: 'bg-yellow-100' },
   { label: 'أزرق', value: 'bg-blue-100' },
   { label: 'أخضر', value: 'bg-green-100' },
+  { label: 'وردي', value: 'bg-pink-100' },
+  { label: 'بنفسجي', value: 'bg-purple-100' },
+  { label: 'أحمر', value: 'bg-red-100' },
+  { label: 'رمادي', value: 'bg-slate-200' },
+  { label: 'سماوي', value: 'bg-cyan-100' },
+  { label: 'ليموني', value: 'bg-lime-100' },
 ];
 
 export default function Sections() {
@@ -43,6 +50,8 @@ export default function Sections() {
       loop
       style={{ width: 200, height: 200 }}
     />
+    <Text className={"font-bold text-xl"}>يتم التحميل ...</Text>
+
   </SafeAreaView>;
   if (error) return <SafeAreaView className="flex-1 items-center justify-center">
     <LottieView
@@ -233,34 +242,32 @@ export default function Sections() {
         <View className="flex-1 justify-end bg-black/40">
           <View className="bg-white rounded-t-2xl p-5 gap-4">
             <View className="flex-row items-center justify-between">
-              <Text className="text-lg font-bold">قسم جديد</Text>
+              <Text className="text-xl font-bold">قسم جديد</Text>
               <Pressable onPress={() => setAddVisible(false)}>
                 <X size={22} color="#64748b" />
               </Pressable>
             </View>
 
             <View className="gap-1">
-              <Text className="text-slate-500 text-xs text-right">اسم القسم</Text>
+              <Text className="text-slate-700 text-md text-left">اسم القسم</Text>
               <TextInput
                 className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
                 value={newName}
                 onChangeText={setNewName}
-                placeholder="الرف البرتقالي"
+                placeholder="الرف ..."
               />
             </View>
 
             <View className="gap-2">
-              <Text className="text-slate-500 text-xs text-right">اللون</Text>
-              <View className="flex-row gap-2">
+              <Text className="text-slate-700 text-md text-left"> اللون ( اختياري ) </Text>
+              <View className="flex-row flex-wrap gap-2">
                 {COLOR_OPTIONS.map((c) => (
                   <Pressable
                     key={c.value}
                     onPress={() => setNewColor(c.value)}
-                    className={`flex-1 items-center rounded-lg py-3 border ${c.value} ${newColor === c.value ? 'border-indigo-600' : 'border-transparent'
+                    className={`w-14 h-14 items-center justify-center rounded-lg border-2 ${c.value} ${newColor === c.value ? 'border-indigo-600' : 'border-transparent'
                       }`}
-                  >
-                    <Text className="text-sm">{c.label}</Text>
-                  </Pressable>
+                  />
                 ))}
               </View>
             </View>
@@ -280,14 +287,14 @@ export default function Sections() {
         <View className="flex-1 justify-end bg-black/40">
           <View className="bg-white rounded-t-2xl p-5 gap-4">
             <View className="flex-row items-center justify-between">
-              <Text className="text-lg font-bold">تعديل القسم</Text>
+              <Text className="text-xl font-bold">تعديل القسم</Text>
               <Pressable onPress={() => setEditVisible(false)}>
                 <X size={22} color="#64748b" />
               </Pressable>
             </View>
 
             <View className="gap-1">
-              <Text className="text-slate-500 text-xs text-right">اسم القسم</Text>
+              <Text className="text-slate-700 text-md text-left">اسم القسم</Text>
               <TextInput
                 className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
                 value={editName}
@@ -296,17 +303,16 @@ export default function Sections() {
             </View>
 
             <View className="gap-2">
-              <Text className="text-slate-500 text-xs text-right">اللون</Text>
-              <View className="flex-row gap-2">
+              <Text className="text-slate-700 text-md text-left">اللون ( اختياري ) </Text>
+              
+              <View className="flex-row flex-wrap gap-2">
                 {COLOR_OPTIONS.map((c) => (
                   <Pressable
                     key={c.value}
                     onPress={() => setEditColor(c.value)}
-                    className={`flex-1 items-center rounded-lg py-3 border ${c.value} ${editColor === c.value ? 'border-indigo-600' : 'border-transparent'
+                    className={`w-14 h-14 items-center justify-center rounded-lg border-2 ${c.value} ${editColor === c.value ? 'border-indigo-600' : 'border-transparent'
                       }`}
-                  >
-                    <Text className="text-sm">{c.label}</Text>
-                  </Pressable>
+                  />
                 ))}
               </View>
             </View>
