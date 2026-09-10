@@ -120,7 +120,7 @@ export default function SectionDetail() {
   const handleDeleteFloor = (floor: (typeof section.floors)[number]) => {
     Alert.alert(
       'حذف هذا الطابق؟',
-      `سيتم حذف "${floor.name}" وجميع المنتجات الموجودة فيه نهائيًا.`,
+      `سيتم حذف "${floor.name}" وجميع  الادوية الموجودة فيه نهائيًا.`,
       [
         { text: 'إلغاء', style: 'cancel' },
         {
@@ -159,7 +159,7 @@ export default function SectionDetail() {
               <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
                 <Package size={20} color="#4338ca" />
                 <Text className="text-2xl font-bold mt-2 text-left">{totalItems}</Text>
-                <Text className="text-slate-700 text-md text-left">إجمالي المنتجات</Text>
+                <Text className="text-slate-700 text-md text-left">إجمالي الادوية</Text>
               </View>
               <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
                 <Layers size={20} color="#4338ca" />

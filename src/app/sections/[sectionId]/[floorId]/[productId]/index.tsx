@@ -17,6 +17,8 @@ export default function ProductDetail() {
     const [editVisible, setEditVisible] = useState(false);
     const [transferVisible, setTransferVisible] = useState(false);
 
+    const [editName, setEditName] = useState('');
+    const [editDci, setEditDci] = useState('');
     const [editQuantity, setEditQuantity] = useState('');
     const [editLot, setEditLot] = useState('');
     const [editExpiry, setEditExpiry] = useState('');
@@ -56,7 +58,7 @@ export default function ProductDetail() {
     if (!batch) {
         return (
             <SafeAreaView className="flex-1 items-center justify-center">
-                <Text>المنتج غير موجود</Text>
+                <Text>الدواء غير موجود</Text>
             </SafeAreaView>
         );
     }
@@ -95,6 +97,8 @@ export default function ProductDetail() {
     };
 
     const openEditModal = () => {
+        setEditName(batch.products?.name ?? '');
+        setEditDci(batch.products?.dci ?? '');
         setEditQuantity(String(batch.quantity));
         setEditLot(batch.lot);
         setEditExpiry(batch.expiry_date);
@@ -102,7 +106,26 @@ export default function ProductDetail() {
     };
 
     const handleSaveEdit = async () => {
+        if (!editName.trim() || !editDci.trim()) {
+            Alert.alert('معلومات ناقصة', 'يرجى إدخال اسم الدواء والـ DCI.');
+            return;
+        }
+
         setSubmitting(true);
+
+        if (batch.products?.id) {
+            const { error: productError } = await supabase
+                .from('products')
+                .update({ name: editName.trim(), dci: editDci.trim() })
+                .eq('id', batch.products.id);
+
+            if (productError) {
+                setSubmitting(false);
+                Alert.alert('خطأ', productError.message);
+                return;
+            }
+        }
+
         const { error } = await supabase
             .from('stock_batches')
             .update({
@@ -119,6 +142,7 @@ export default function ProductDetail() {
         }
         setEditVisible(false);
         refetch();
+        refresh();
     };
 
     const otherWarehouses = warehouses.filter((w) => w.id !== selectedWarehouse?.id);
@@ -254,10 +278,28 @@ export default function ProductDetail() {
                 <View className="flex-1 justify-end bg-black/40">
                     <View className="bg-white rounded-t-2xl p-5 gap-4">
                         <View className="flex-row items-center justify-between">
-                            <Text className="text-lg font-bold">تعديل المنتج</Text>
+                            <Text className="text-lg font-bold">تعديل الدواء</Text>
                             <Pressable onPress={() => setEditVisible(false)}>
                                 <X size={22} color="#64748b" />
                             </Pressable>
+                        </View>
+
+                        <View className="gap-1">
+                            <Text className="text-slate-700 text-md text-left">اسم الدواء</Text>
+                            <TextInput
+                                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
+                                value={editName}
+                                onChangeText={setEditName}
+                            />
+                        </View>
+
+                        <View className="gap-1">
+                            <Text className="text-slate-700 text-md text-left">DCI</Text>
+                            <TextInput
+                                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
+                                value={editDci}
+                                onChangeText={setEditDci}
+                            />
                         </View>
 
                         <View className="gap-1">
@@ -285,7 +327,6 @@ export default function ProductDetail() {
                                 className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
                                 value={editExpiry}
                                 onChangeText={setEditExpiry}
-                                placeholder="2027-01-01"
                             />
                         </View>
 
@@ -359,7 +400,6 @@ export default function ProductDetail() {
                     </View>
                 </View>
             </Modal>
-
         </SafeAreaView>
     );
 }

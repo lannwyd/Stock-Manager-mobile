@@ -65,11 +65,13 @@ export default function Home() {
   const dropdownOptions = warehouses.map((w) => ({ label: w.name, value: w.id }));
   const sections = selectedWarehouse?.sections ?? [];
 
-  const totalProducts = sections.reduce((sum, section) => {
-    return sum + (section.floors ?? []).reduce((fSum, floor) => {
-      return fSum + (floor.stock_batches ?? []).reduce((bSum, batch) => bSum + (batch.quantity ?? 0), 0);
-    }, 0);
-  }, 0);
+  const totalProducts = new Set(
+    sections.flatMap((section) =>
+      (section.floors ?? []).flatMap((floor) =>
+        (floor.stock_batches ?? []).map((batch) => batch.products?.name)
+      )
+    )
+  ).size;
 
   const isSearching = search.trim().length > 0;
 
@@ -93,7 +95,7 @@ export default function Home() {
               <Search size={20} color="#64748b" />
               <TextInput
                 className="flex-1 mr-2 h-full text-base text-slate-800 text-right"
-                placeholder="ابحث عن منتج..."
+                placeholder="ابحث عن دواء..."
                 placeholderTextColor="#888"
                 value={search}
                 onChangeText={setsearch}
@@ -108,7 +110,7 @@ export default function Home() {
                   <View className="flex-1 bg-white rounded-xl border border-slate-200 py-4 px-6">
                     <Package size={20} color="#4338ca" />
                     <Text className="text-2xl font-bold mt-2 text-left">{totalProducts}</Text>
-                    <Text className="text-slate-700 text-md text-left">إجمالي المنتجات</Text>
+                    <Text className="text-slate-700 text-md text-left">إجمالي الادوية</Text>
                   </View>
                   <View className="flex-1 bg-white rounded-xl border border-slate-200 py-4 px-6">
                     <Layers size={20} color="#4338ca" />
@@ -148,7 +150,7 @@ export default function Home() {
                               </View>
                               <View className="flex h-full flex-row items-center">
                                 <Dot size={34} color="#64748b" />
-                                <Text className="text-slate-600">{distinctProductCount} منتج</Text>
+                                <Text className="text-slate-600">{distinctProductCount} دواء</Text>
                               </View>
                             </View>
                             <View className="w-[10%] h-full flex flex-row justify-end items-center">
@@ -191,7 +193,7 @@ export default function Home() {
         ListEmptyComponent={
           isSearching ? (
             <View className="items-center py-8">
-              <Text className="text-slate-400">لا توجد منتجات مطابقة</Text>
+              <Text className="text-slate-400">لا توجد ادوية مطابقة</Text>
             </View>
           ) : null
         }
@@ -204,7 +206,7 @@ export default function Home() {
                   <Text className="text-sm text-slate-500 text-right">{item.products?.dci}</Text>
                 </View>
                 <View className="flex-row items-center gap-2">
-                  <Text className="text-slate-600">{item.quantity} منتج</Text>
+                  <Text className="text-slate-600">{item.quantity} دواء</Text>
                   <ChevronLeft size={20} color="#4338ca" />
                 </View>
               </Pressable>
@@ -218,7 +220,7 @@ export default function Home() {
               </View>
               <View>
                 <Text className="text-base font-medium text-right">
-                  {item.stock_batches?.products?.name ?? 'منتج غير معروف'}
+                  {item.stock_batches?.products?.name ?? 'دواء غير معروف'}
                 </Text>
                 <Text className=" text-sm text-right">
                   {item.from_warehouse?.name ?? 'N/A'} ← {item.to_warehouse?.name ?? 'N/A'} · {new Date(item.created_at).toLocaleDateString()}

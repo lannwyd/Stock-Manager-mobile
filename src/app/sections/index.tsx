@@ -134,7 +134,7 @@ export default function Sections() {
   const handleDeleteSection = (item: (typeof sections)[number]) => {
     Alert.alert(
       'حذف هذا القسم؟',
-      `سيتم حذف "${item.name}" وجميع الطوابق والمنتجات الموجودة بداخله نهائيًا.`,
+      `سيتم حذف "${item.name}" وجميع الطوابق و الادوية الموجودة بداخله نهائيًا.`,
       [
         { text: 'إلغاء', style: 'cancel' },
         {
