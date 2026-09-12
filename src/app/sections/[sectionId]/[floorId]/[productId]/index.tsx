@@ -207,8 +207,8 @@ export default function ProductDetail() {
                     </View>
                     {location && (
                         <View className="flex-row items-center justify-center gap-2 bg-indigo-50 rounded-lg px-3 py-2">
-                            <MapPin size={16} color="#4338ca" />
-                            <Text className="text-sm text-indigo-800">
+                            <MapPin size={20} color="#4338ca" />
+                            <Text className="flex-1 text-sm text-indigo-800 text-right">
                                 {location.warehouseName} · {location.sectionName} · {location.floorName}
                             </Text>
                         </View>

@@ -3,7 +3,7 @@ import { useWarehouseContext } from '@/context/warehouseContext';
 import { useHistory } from '@/hooks/useHistory';
 import { Link } from 'expo-router';
 import LottieView from 'lottie-react-native';
-import { ChevronLeft, Dot, Layers, Package, Search } from 'lucide-react-native';
+import { ChevronLeft, ChevronRight, Dot, Layers, MapPin, Package, Search } from 'lucide-react-native';
 import { useCallback, useMemo, useState } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -43,6 +43,49 @@ export default function Home() {
         b.products?.dci?.toLowerCase().includes(query)
     );
   }, [allBatches, search]);
+
+
+  function SearchResultRow({ item, sections, warehouseName }: { item: any; sections: any[]; warehouseName?: string }) {
+    const section = sections.find((s) => s.id === item.sectionId);
+    const floor = section?.floors.find((f: any) => f.id === item.floorId);
+
+    return (
+      <Link href={`/sections/${item.sectionId}/${item.floorId}/${item.id}`} asChild>
+        
+        <Pressable className=" flex-row items-center justify-between bg-white rounded-xl border border-slate-200 p-4 ">
+          <View className="flex flex-row  w-[40%] items-center gap-2">
+            <ChevronRight size={20} color="#4338ca" />
+            <Text className="flex-1 text-slate-600 text-left">{item.quantity} دواء</Text>
+          </View>
+          <View className={"w-[60%] gap-1.5"}>
+            <View className={"flex flex-row items-center justify-between"}>
+              <View className={" p-2 bg-indigo-100 rounded-lg"}>
+                <Text className=" text-sm text-right  text-indigo-600 ">{item.products?.dci} </Text>
+              </View>
+              <Text className="text-md font-medium text-left">{item.products?.name}</Text>
+
+            </View>
+            <View>
+              {section && floor && (
+                <View className={"flex flex-row items-center justify-center p-1.5 gap-2 rounded-lg"}>
+
+                  <Text className="text-sm text-indigo-600 text-left ">
+
+                    {warehouseName} · {section.name} · {floor.name}
+                  </Text>
+                  <MapPin size={14} color="#4338ca" />
+
+                </View>
+              )}
+            </View>
+          </View>
+
+          
+        </Pressable>
+      </Link>
+    );
+  }
+
 
   if (warehousesLoading || historyLoading) return <SafeAreaView className="flex-1 items-center justify-center">
     <LottieView
@@ -198,18 +241,7 @@ export default function Home() {
         }
         renderItem={({ item }) =>
           isSearching ? (
-            <Link href={`/sections/${item.sectionId}/${item.floorId}/${item.id}`} asChild>
-              <Pressable className="flex-row items-center justify-between bg-white rounded-xl border border-slate-200 px-4 py-4">
-                <View>
-                  <Text className="text-base font-medium text-left">{item.products?.name}</Text>
-                  <Text className="text-sm text-slate-500 text-right">{item.products?.dci}</Text>
-                </View>
-                <View className="flex-row items-center gap-2">
-                  <Text className="text-slate-600">{item.quantity} دواء</Text>
-                  <ChevronLeft size={20} color="#4338ca" />
-                </View>
-              </Pressable>
-            </Link>
+            <SearchResultRow item={item} sections={sections} warehouseName={selectedWarehouse?.name} />
           ) : (
             <View className="flex flex-row justify-between bg-white px-4 py-3 rounded-xl border border-slate-200">
               <View >
