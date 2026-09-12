@@ -2,7 +2,7 @@ import { useWarehouseContext } from '@/context/warehouseContext';
 import { supabase } from '@/lib/supabase';
 import { Link, useRouter } from 'expo-router';
 import LottieView from 'lottie-react-native';
-import { ChevronLeft, Dot, Layers, Package, Pencil, Plus, Trash2, X } from 'lucide-react-native';
+import { ChevronLeft,  Layers, Package, Pencil, Plus, Trash2, X } from 'lucide-react-native';
 import { useCallback, useState } from 'react';
 import { Alert, FlatList, Modal, Pressable, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -195,13 +195,13 @@ export default function Sections() {
               <Link href={`/sections/${item.id}`} asChild>
                 <Pressable className="flex flex-row items-start justify-between px-4 py-5">
                   <View className="w-[90%] flex flex-row justify-between items-center gap-2">
-                    <View className="flex flex-col">
+                    <View className="flex w-[50%] flex-col">
                       <Text className="text-lg font-medium text-left">{item.name}</Text>
-                      <Text className="text-sm text-slate-700 text-right">اضغط لمزيد من المعلومات</Text>
+                      <Text className="text-md text-slate-700 text-left">اضغط لمزيد من المعلومات</Text>
                     </View>
-                    <View className="flex h-full flex-row items-center">
-                      <Dot size={34} color="#64748b" />
-                      <Text className="text-slate-800">{distinctProductCount} دواء</Text>
+                    <View className="flex w-[50%] justify-end h-full flex-row items-center">
+                      
+                      <Text className="flex-1 text-slate-800 text-right">{distinctProductCount} أدوية</Text>
                     </View>
                   </View>
                   <View className="w-[10%] h-full flex flex-row justify-end items-center">

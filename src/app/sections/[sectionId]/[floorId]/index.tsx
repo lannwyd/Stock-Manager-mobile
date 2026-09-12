@@ -201,8 +201,8 @@ export default function FloorDetail() {
           <Link href={`/sections/${sectionId}/${floorId}/${item.id}`} asChild>
             <Pressable className="flex-row items-center justify-between bg-white rounded-xl border border-slate-200 px-4 py-4">
               <View>
-                <Text className="text-base font-medium text-right">{item.products?.name}</Text>
-                <Text className="text-sm text-slate-500 text-right">{item.products?.dci}</Text>
+                <Text className="text-base font-medium text-left">{item.products?.name}</Text>
+                <Text className="text-sm text-slate-500 text-left">{item.products?.dci}</Text>
               </View>
               <View className="flex-row items-center gap-2">
                 <Text className="text-slate-800">{item.quantity} علبة</Text>

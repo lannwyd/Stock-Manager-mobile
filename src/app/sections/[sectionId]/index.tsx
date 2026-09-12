@@ -179,11 +179,11 @@ export default function SectionDetail() {
               <Link href={`/sections/${sectionId}/${item.id}`} asChild>
                 <Pressable className="flex flex-row items-start justify-between px-4 py-5">
                   <View className="w-[90%] flex flex-row justify-between items-center gap-2">
-                    <View className="flex flex-col">
+                    <View className="w-[50%] flex flex-col">
                       <Text className="text-lg font-medium text-left ">{item.name}</Text>
-                      <Text className="text-sm text-slate-700 text-right">اضغط لمزيد من المعلومات</Text>
+                      <Text className="text-sm text-slate-700 text-left">اضغط لمزيد من المعلومات</Text>
                     </View>
-                    <View className="flex h-full flex-row items-center">
+                    <View className="flex w-[50%] justify-end h-full flex-row items-center">
                       <Dot size={34} color="#64748b" />
                       <Text className="text-slate-700">{distinctProductCount} أدوية</Text>
                     </View>

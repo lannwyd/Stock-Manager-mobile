@@ -95,9 +95,9 @@ export default function Home() {
               <Search size={20} color="#64748b" />
               <TextInput
                 className="flex-1 mr-2 h-full text-base text-slate-800 text-right"
-                placeholder="ابحث عن دواء..."
-                placeholderTextColor="#888"
                 value={search}
+                placeholder=". . ."
+                placeholderTextColor="#888"
                 onChangeText={setsearch}
                 autoCorrect={false}
                 clearButtonMode="while-editing"
@@ -144,13 +144,12 @@ export default function Home() {
                             className={`flex flex-row items-start rounded-xl justify-between px-4 py-5 ${item.color ?? 'bg-slate-100'}`}
                           >
                             <View className="w-[90%] flex flex-row justify-between items-center gap-2">
-                              <View className="flex gap-2 flex-col">
+                              <View className="flex w-[50%] gap-2 flex-col">
                                 <Text className="text-lg font-medium text-left">{item.name}</Text>
-                                <Text className="text-sm text-slate-700 text-right">اضغط لمزيد من المعلومات</Text>
+                                <Text className="text-sm text-slate-700 text-left">اضغط لمزيد من المعلومات</Text>
                               </View>
-                              <View className="flex h-full flex-row items-center">
-                                <Dot size={34} color="#64748b" />
-                                <Text className="text-slate-600">{distinctProductCount} دواء</Text>
+                              <View className=" flex flex-row w-[50%] items-center ">
+                                <Text className="flex-1 text-slate-600 text-right">{distinctProductCount} أدوية</Text>
                               </View>
                             </View>
                             <View className="w-[10%] h-full flex flex-row justify-end items-center">

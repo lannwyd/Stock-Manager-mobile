@@ -59,7 +59,7 @@ export default function HistoryScreen() {
                             <Search size={20} color="#64748b" />
                             <TextInput
                                 className="flex-1 mr-2 h-full text-base text-slate-800 text-right"
-                                placeholder="ابحث في السجل..."
+                                placeholder=". . ."
                                 placeholderTextColor="#888"
                                 value={search}
                                 onChangeText={setSearch}
