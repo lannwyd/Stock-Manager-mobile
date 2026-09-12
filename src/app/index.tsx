@@ -3,7 +3,7 @@ import { useWarehouseContext } from '@/context/warehouseContext';
 import { useHistory } from '@/hooks/useHistory';
 import { Link } from 'expo-router';
 import LottieView from 'lottie-react-native';
-import { ChevronLeft, ChevronRight, Dot, Layers, MapPin, Package, Search } from 'lucide-react-native';
+import { ChevronLeft, ChevronRight, Dot, Layers, MapPin, Package, Search, X } from 'lucide-react-native';
 import { useCallback, useMemo, useState } from 'react';
 import { FlatList, Pressable, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -58,21 +58,18 @@ export default function Home() {
             <Text className="flex-1 text-slate-600 text-left">{item.quantity} دواء</Text>
           </View>
           <View className={"w-[60%] gap-1.5"}>
-            <View className={"flex flex-row items-center justify-between"}>
-              <View className={" p-2 bg-indigo-100 rounded-lg"}>
-                <Text className=" text-sm text-right  text-indigo-600 ">{item.products?.dci} </Text>
+            <View className={"w-full flex flex-row items-center justify-between"}>
+              <View className={"w-[45%] p-2 bg-indigo-50 rounded-lg"}>
+                <Text className="w-full text-sm text-center  text-indigo-600 ">{item.products?.dci}</Text>
               </View>
-              <Text className="text-md font-medium text-left">{item.products?.name}</Text>
+              <Text className="w-[45%] text-md font-medium text-right">{item.products?.name}</Text>
 
             </View>
             <View>
               {section && floor && (
                 <View className={"flex flex-row items-center justify-center p-1.5 gap-2 rounded-lg"}>
 
-                  <Text className="text-sm text-indigo-600 text-left ">
-
-                    {warehouseName} · {section.name} · {floor.name}
-                  </Text>
+                  <Text className=" w-full text-sm text-indigo-600 text-left ">{warehouseName} · {section.name} · {floor.name}</Text>
                   <MapPin size={14} color="#4338ca" />
 
                 </View>
@@ -145,6 +142,11 @@ export default function Home() {
                 autoCorrect={false}
                 clearButtonMode="while-editing"
               />
+              {search.length > 0 && (
+                <Pressable onPress={() => setsearch('')} hitSlop={10} className="p-1">
+                  <X size={24} color="#64748b" />
+                </Pressable>
+              )}
             </View>
 
             {!isSearching && (

@@ -174,6 +174,11 @@ export default function FloorDetail() {
                 autoCorrect={false}
                 clearButtonMode="while-editing"
               />
+              {search.length > 0 && (
+                <Pressable onPress={() => setSearch('')} hitSlop={10} className="p-1">
+                  <X size={24} color="#64748b" />
+                </Pressable>
+              )}
             </View>
 
             <View className="flex-row gap-4">
@@ -232,48 +237,83 @@ export default function FloorDetail() {
 
             <View className="gap-1">
               <Text className="text-slate-700 text-md text-left">اسم الدواء</Text>
-              <TextInput
-                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
-                value={newName}
-                onChangeText={setNewName}
-              />
+              <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                <TextInput
+                  className="flex-1 py-2 text-base text-right"
+                  value={newName}
+                  onChangeText={setNewName}
+                />
+                {newName.length > 0 && (
+                  <Pressable onPress={() => setNewName('')} hitSlop={10} className="p-1">
+                    <X size={18} color="#64748b" />
+                  </Pressable>
+                )}
+              </View>
             </View>
 
             <View className="gap-1">
               <Text className="text-slate-700 text-md text-left">DCI</Text>
-              <TextInput
-                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
-                value={newDci}
-                onChangeText={setNewDci}
-              />
+              <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                <TextInput
+                  className="flex-1 py-2 text-base text-right"
+                  value={newDci}
+                  onChangeText={setNewDci}
+                />
+                {newDci.length > 0 && (
+                  <Pressable onPress={() => setNewDci('')} hitSlop={10} className="p-1">
+                    <X size={18} color="#64748b" />
+                  </Pressable>
+                )}
+              </View>
             </View>
 
             <View className="gap-1">
               <Text className="text-slate-700 text-md text-left">LOT</Text>
-              <TextInput
-                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
-                value={newLot}
-                onChangeText={setNewLot}
-              />
+              <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                <TextInput
+                  className="flex-1 py-2 text-base text-right"
+                  value={newLot}
+                  onChangeText={setNewLot}
+                />
+                {newLot.length > 0 && (
+                  <Pressable onPress={() => setNewLot('')} hitSlop={10} className="p-1">
+                    <X size={18} color="#64748b" />
+                  </Pressable>
+                )}
+              </View>
             </View>
 
             <View className="gap-1">
               <Text className="text-slate-700 text-md text-left">تاريخ الانتهاء (YYYY-MM-DD)</Text>
-              <TextInput
-                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
-                value={newExpiry}
-                onChangeText={setNewExpiry}
-              />
+              <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                <TextInput
+                  className="flex-1 py-2 text-base text-right"
+                  value={newExpiry}
+                  onChangeText={setNewExpiry}
+                />
+                {newExpiry.length > 0 && (
+                  <Pressable onPress={() => setNewExpiry('')} hitSlop={10} className="p-1">
+                    <X size={18} color="#64748b" />
+                  </Pressable>
+                )}
+              </View>
             </View>
 
             <View className="gap-1">
               <Text className="text-slate-700 text-md text-left">الكمية</Text>
-              <TextInput
-                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
-                keyboardType="numeric"
-                value={newQuantity}
-                onChangeText={setNewQuantity}
-              />
+              <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                <TextInput
+                  className="flex-1 py-2 text-base text-right"
+                  keyboardType="numeric"
+                  value={newQuantity}
+                  onChangeText={setNewQuantity}
+                />
+                {newQuantity.length > 0 && (
+                  <Pressable onPress={() => setNewQuantity('')} hitSlop={10} className="p-1">
+                    <X size={18} color="#64748b" />
+                  </Pressable>
+                )}
+              </View>
             </View>
 
             <Pressable

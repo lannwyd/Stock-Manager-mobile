@@ -286,48 +286,83 @@ export default function ProductDetail() {
 
                         <View className="gap-1">
                             <Text className="text-slate-700 text-md text-left">اسم الدواء</Text>
-                            <TextInput
-                                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
-                                value={editName}
-                                onChangeText={setEditName}
-                            />
+                            <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                                <TextInput
+                                    className="flex-1 py-2 text-base text-right"
+                                    value={editName}
+                                    onChangeText={setEditName}
+                                />
+                                {editName.length > 0 && (
+                                    <Pressable onPress={() => setEditName('')} hitSlop={10} className="p-1">
+                                        <X size={18} color="#64748b" />
+                                    </Pressable>
+                                )}
+                            </View>
                         </View>
 
                         <View className="gap-1">
                             <Text className="text-slate-700 text-md text-left">DCI</Text>
-                            <TextInput
-                                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
-                                value={editDci}
-                                onChangeText={setEditDci}
-                            />
+                            <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                                <TextInput
+                                    className="flex-1 py-2 text-base text-right"
+                                    value={editDci}
+                                    onChangeText={setEditDci}
+                                />
+                                {editDci.length > 0 && (
+                                    <Pressable onPress={() => setEditDci('')} hitSlop={10} className="p-1">
+                                        <X size={18} color="#64748b" />
+                                    </Pressable>
+                                )}
+                            </View>
                         </View>
 
                         <View className="gap-1">
                             <Text className="text-slate-700 text-md text-left">الكمية</Text>
-                            <TextInput
-                                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
-                                keyboardType="numeric"
-                                value={editQuantity}
-                                onChangeText={setEditQuantity}
-                            />
+                            <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                                <TextInput
+                                    className="flex-1 py-2 text-base text-right"
+                                    keyboardType="numeric"
+                                    value={editQuantity}
+                                    onChangeText={setEditQuantity}
+                                />
+                                {editQuantity.length > 0 && (
+                                    <Pressable onPress={() => setEditQuantity('')} hitSlop={10} className="p-1">
+                                        <X size={18} color="#64748b" />
+                                    </Pressable>
+                                )}
+                            </View>
                         </View>
 
                         <View className="gap-1">
                             <Text className="text-slate-700 text-md text-left">LOT </Text>
-                            <TextInput
-                                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
-                                value={editLot}
-                                onChangeText={setEditLot}
-                            />
+                            <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                                <TextInput
+                                    className="flex-1 py-2 text-base text-right"
+                                    value={editLot}
+                                    onChangeText={setEditLot}
+                                />
+                                {editLot.length > 0 && (
+                                    <Pressable onPress={() => setEditLot('')} hitSlop={10} className="p-1">
+                                        <X size={18} color="#64748b" />
+                                    </Pressable>
+                                )}
+                            </View>
                         </View>
 
                         <View className="gap-1">
                             <Text className="text-slate-700 text-md text-left">تاريخ نهاية الصلاحية (YYYY-MM-DD)</Text>
-                            <TextInput
-                                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
-                                value={editExpiry}
-                                onChangeText={setEditExpiry}
-                            />
+                            <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                                <TextInput
+                                    className="flex-1 py-2 text-base text-right"
+                                    value={editExpiry}
+                                    onChangeText={setEditExpiry}
+                                />
+                                {editExpiry.length > 0 && (
+                                    <Pressable onPress={() => setEditExpiry('')} hitSlop={10} className="p-1">
+                                        <X size={18} color="#64748b" />
+                                    </Pressable>
+                                )}
+                            </View>
                         </View>
 
                         <Pressable
@@ -357,12 +392,19 @@ export default function ProductDetail() {
 
                         <View className="gap-1">
                             <Text className="text-slate-700 text-md text-left">الكمية المراد نقلها</Text>
-                            <TextInput
-                                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
-                                keyboardType="numeric"
-                                value={transferQuantity}
-                                onChangeText={setTransferQuantity}
-                            />
+                            <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                                <TextInput
+                                    className="flex-1 py-2 text-base text-right"
+                                    keyboardType="numeric"
+                                    value={transferQuantity}
+                                    onChangeText={setTransferQuantity}
+                                />
+                                {transferQuantity.length > 0 && (
+                                    <Pressable onPress={() => setTransferQuantity('')} hitSlop={10} className="p-1">
+                                        <X size={18} color="#64748b" />
+                                    </Pressable>
+                                )}
+                            </View>
                         </View>
 
                         <View className="gap-2">
@@ -381,13 +423,20 @@ export default function ProductDetail() {
 
                         <View className="gap-1">
                             <Text className="text-slate-700 text-md text-left">ملاحظة (اختياري)</Text>
-                            <TextInput
-                                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
-                                value={transferNote}
-                                onChangeText={setTransferNote}
-                                placeholder=""
-                                multiline
-                            />
+                            <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                                <TextInput
+                                    className="flex-1 py-2 text-base text-right"
+                                    value={transferNote}
+                                    onChangeText={setTransferNote}
+                                    placeholder=""
+                                    multiline
+                                />
+                                {transferNote.length > 0 && (
+                                    <Pressable onPress={() => setTransferNote('')} hitSlop={10} className="p-1">
+                                        <X size={18} color="#64748b" />
+                                    </Pressable>
+                                )}
+                            </View>
                         </View>
 
                         <Pressable

@@ -2,7 +2,7 @@ import { useWarehouseContext } from '@/context/warehouseContext';
 import { supabase } from '@/lib/supabase';
 import { Link, useRouter } from 'expo-router';
 import LottieView from 'lottie-react-native';
-import { ChevronLeft,  Layers, Package, Pencil, Plus, Trash2, X } from 'lucide-react-native';
+import { ChevronLeft, Layers, Package, Pencil, Plus, Trash2, X } from 'lucide-react-native';
 import { useCallback, useState } from 'react';
 import { Alert, FlatList, Modal, Pressable, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -200,7 +200,7 @@ export default function Sections() {
                       <Text className="text-md text-slate-700 text-left">اضغط لمزيد من المعلومات</Text>
                     </View>
                     <View className="flex w-[50%] justify-end h-full flex-row items-center">
-                      
+
                       <Text className="flex-1 text-slate-800 text-right">{distinctProductCount} أدوية</Text>
                     </View>
                   </View>
@@ -250,12 +250,19 @@ export default function Sections() {
 
             <View className="gap-1">
               <Text className="text-slate-700 text-md text-left">اسم القسم</Text>
-              <TextInput
-                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
-                value={newName}
-                onChangeText={setNewName}
-                placeholder="الرف ..."
-              />
+              <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                <TextInput
+                  className="flex-1 py-2 text-base text-right"
+                  value={newName}
+                  onChangeText={setNewName}
+                  placeholder="..."
+                />
+                {newName.length > 0 && (
+                  <Pressable onPress={() => setNewName('')} hitSlop={10} className="p-1">
+                    <X size={18} color="#64748b" />
+                  </Pressable>
+                )}
+              </View>
             </View>
 
             <View className="gap-2">
@@ -295,16 +302,23 @@ export default function Sections() {
 
             <View className="gap-1">
               <Text className="text-slate-700 text-md text-left">اسم القسم</Text>
-              <TextInput
-                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
-                value={editName}
-                onChangeText={setEditName}
-              />
+              <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                <TextInput
+                  className="flex-1 py-2 text-base text-right"
+                  value={editName}
+                  onChangeText={setEditName}
+                />
+                {editName.length > 0 && (
+                  <Pressable onPress={() => setEditName('')} hitSlop={10} className="p-1">
+                    <X size={18} color="#64748b" />
+                  </Pressable>
+                )}
+              </View>
             </View>
 
             <View className="gap-2">
               <Text className="text-slate-700 text-md text-left">اللون ( اختياري ) </Text>
-              
+
               <View className="flex-row flex-wrap gap-2">
                 {COLOR_OPTIONS.map((c) => (
                   <Pressable

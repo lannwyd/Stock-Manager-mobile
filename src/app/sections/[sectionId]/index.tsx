@@ -232,13 +232,20 @@ export default function SectionDetail() {
             </View>
 
             <View className="gap-1">
-              <Text className="text-slate-500 text-xs text-right">اسم الطابق</Text>
-              <TextInput
-                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
-                value={newName}
-                onChangeText={setNewName}
-                placeholder="الطابق 4"
-              />
+              <Text className="text-slate-700 text-md text-left">اسم الطابق</Text>
+              <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                <TextInput
+                  className="flex-1 py-2 text-base text-right"
+                  value={newName}
+                  onChangeText={setNewName}
+                  placeholder="الطابق 4"
+                />
+                {newName.length > 0 && (
+                  <Pressable onPress={() => setNewName('')} hitSlop={10} className="p-1">
+                    <X size={18} color="#64748b" />
+                  </Pressable>
+                )}
+              </View>
             </View>
 
             <Pressable
@@ -263,12 +270,19 @@ export default function SectionDetail() {
             </View>
 
             <View className="gap-1">
-              <Text className="text-slate-500 text-xs text-right">اسم الطابق</Text>
-              <TextInput
-                className="border border-slate-300 rounded-lg px-3 py-2 text-base text-right"
-                value={editName}
-                onChangeText={setEditName}
-              />
+              <Text className="text-slate-700 text-md text-left">اسم الطابق</Text>
+              <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                <TextInput
+                  className="flex-1 py-2 text-base text-right"
+                  value={editName}
+                  onChangeText={setEditName}
+                />
+                {editName.length > 0 && (
+                  <Pressable onPress={() => setEditName('')} hitSlop={10} className="p-1">
+                    <X size={18} color="#64748b" />
+                  </Pressable>
+                )}
+              </View>
             </View>
 
             <Pressable

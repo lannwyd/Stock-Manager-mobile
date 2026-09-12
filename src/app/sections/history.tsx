@@ -1,11 +1,11 @@
 import { useHistory } from '@/hooks/useHistory';
 import LottieView from 'lottie-react-native';
-import { Search } from 'lucide-react-native';
+import { Search, X } from 'lucide-react-native';
 import { useCallback, useMemo, useState } from 'react';
-import { FlatList, Text, TextInput, View,Pressable } from 'react-native';
+import { FlatList, Text, TextInput, View, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {useRouter } from 'expo-router';
-import { ChevronLeft} from 'lucide-react-native';
+import { useRouter } from 'expo-router';
+import { ChevronLeft } from 'lucide-react-native';
 
 
 export default function HistoryScreen() {
@@ -75,6 +75,11 @@ export default function HistoryScreen() {
                                 autoCorrect={false}
                                 clearButtonMode="while-editing"
                             />
+                            {search.length > 0 && (
+                                <Pressable onPress={() => setSearch('')} hitSlop={10} className="p-1">
+                                    <X size={24} color="#64748b" />
+                                </Pressable>
+                            )}
                         </View>
                     </View>
                 }
