@@ -91,12 +91,12 @@ export default function Home() {
               onChange={(value: any) => setSelectedWarehouseId(value)}
             />
 
-            <View className="flex-row items-center bg-white w-full h-14 rounded-xl border border-slate-400 px-3">
+            <View className="flex-row items-center bg-white w-full h-16 rounded-xl border border-slate-400 px-3">
               <Search size={20} color="#64748b" />
               <TextInput
                 className="flex-1 mr-2 h-full text-base text-slate-800 text-right"
                 value={search}
-                placeholder=". . ."
+                placeholder="ابحث عن دواء أو DCI..."
                 placeholderTextColor="#888"
                 onChangeText={setsearch}
                 autoCorrect={false}

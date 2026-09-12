@@ -2,13 +2,18 @@ import { useHistory } from '@/hooks/useHistory';
 import LottieView from 'lottie-react-native';
 import { Search } from 'lucide-react-native';
 import { useCallback, useMemo, useState } from 'react';
-import { FlatList, Text, TextInput, View } from 'react-native';
+import { FlatList, Text, TextInput, View,Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import {useRouter } from 'expo-router';
+import { ChevronLeft} from 'lucide-react-native';
+
 
 export default function HistoryScreen() {
     const { historyItems, loading, error, refetch } = useHistory();
     const [search, setSearch] = useState('');
     const [refreshing, setRefreshing] = useState(false);
+    const router = useRouter();
+
 
     const onRefresh = useCallback(async () => {
         setRefreshing(true);
@@ -53,13 +58,17 @@ export default function HistoryScreen() {
                 onRefresh={onRefresh}
                 ListHeaderComponent={
                     <View className="gap-4">
-                        <Text className="text-2xl font-bold text-right">السجل</Text>
-
-                        <View className="flex-row items-center bg-white w-full h-14 rounded-xl border border-slate-400 px-3">
+                        <View className="flex-row items-center justify-between mt-2 px-1">
+                            <Text className="font-semibold text-2xl text-left">السجل</Text>
+                            <Pressable onPress={() => router.back()} className="p-2">
+                                <ChevronLeft size={28} color="#4338ca" />
+                            </Pressable>
+                        </View>
+                        <View className="flex-row items-center bg-white w-full h-16 rounded-xl border border-slate-400 px-3">
                             <Search size={20} color="#64748b" />
                             <TextInput
                                 className="flex-1 mr-2 h-full text-base text-slate-800 text-right"
-                                placeholder=". . ."
+                                placeholder="ابحث في السجل..."
                                 placeholderTextColor="#888"
                                 value={search}
                                 onChangeText={setSearch}

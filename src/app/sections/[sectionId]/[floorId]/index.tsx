@@ -163,10 +163,10 @@ export default function FloorDetail() {
               </Pressable>
             </View>
 
-            <View className="flex-row items-center bg-white w-full h-14 rounded-xl border border-slate-400 px-3">
+            <View className="flex-row items-center bg-white w-full h-16 rounded-xl border border-slate-400 px-3">
               <Search size={20} color="#64748b" />
               <TextInput
-                className="flex-1 mr-2 h-full text-base text-slate-800 text-right"
+                className="flex-1 mr-2  h-full text-base text-slate-800 text-right"
                 placeholder="ابحث عن دواء أو DCI..."
                 placeholderTextColor="#888"
                 value={search}
@@ -204,9 +204,9 @@ export default function FloorDetail() {
                 <Text className="text-base font-medium text-left">{item.products?.name}</Text>
                 <Text className="text-sm text-slate-500 text-left">{item.products?.dci}</Text>
               </View>
-              <View className="flex-row items-center gap-2">
-                <Text className="text-slate-800">{item.quantity} علبة</Text>
-                <ChevronLeft size={20} color="#4338ca" />
+              <View className="flex w-[50%] justify-end h-full flex-row items-center gap-4">
+                <Text className="flex-1 text-right text-slate-800">{item.quantity}   علبة</Text>
+                <ChevronLeft size={32} color="#4338ca" />
               </View>
             </Pressable>
           </Link>

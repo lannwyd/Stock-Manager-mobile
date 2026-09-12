@@ -2,7 +2,7 @@ import { useWarehouseContext } from '@/context/warehouseContext';
 import { supabase } from '@/lib/supabase';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import LottieView from 'lottie-react-native';
-import { ChevronLeft, Dot, Layers, Package, Pencil, Plus, Trash2, X } from 'lucide-react-native';
+import { ChevronLeft, Layers, Package, Pencil, Plus, Trash2, X } from 'lucide-react-native';
 import { useCallback, useState } from 'react';
 import { Alert, FlatList, Modal, Pressable, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -184,8 +184,7 @@ export default function SectionDetail() {
                       <Text className="text-sm text-slate-700 text-left">اضغط لمزيد من المعلومات</Text>
                     </View>
                     <View className="flex w-[50%] justify-end h-full flex-row items-center">
-                      <Dot size={34} color="#64748b" />
-                      <Text className="text-slate-700">{distinctProductCount} أدوية</Text>
+                      <Text className="flex-1 text-right text-slate-700">{distinctProductCount} أدوية</Text>
                     </View>
                   </View>
                   <View className="w-[10%] h-full flex flex-row justify-end items-center">
