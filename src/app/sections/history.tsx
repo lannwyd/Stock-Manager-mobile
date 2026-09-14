@@ -1,11 +1,11 @@
 import { useHistory } from '@/hooks/useHistory';
-import LottieView from 'lottie-react-native';
-import { Search, X } from 'lucide-react-native';
-import { useCallback, useMemo, useState } from 'react';
-import { FlatList, Text, TextInput, View, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { supabase } from '@/lib/supabase';
 import { useRouter } from 'expo-router';
-import { ChevronLeft } from 'lucide-react-native';
+import LottieView from 'lottie-react-native';
+import { ChevronLeft, Search, Trash2, X } from 'lucide-react-native';
+import { useCallback, useMemo, useState } from 'react';
+import { Alert, FlatList, Pressable, Text, TextInput, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 export default function HistoryScreen() {
@@ -28,6 +28,28 @@ export default function HistoryScreen() {
             item.stock_batches?.products?.name?.toLowerCase().includes(query)
         );
     }, [historyItems, search]);
+
+    const handleDeleteHistoryItem = (item: (typeof historyItems)[number]) => {
+        Alert.alert(
+            'حذف هذا السجل؟',
+            `سيتم حذف سجل نقل "${item.stock_batches?.products?.name ?? 'هذا الدواء'}" نهائيًا.`,
+            [
+                { text: 'إلغاء', style: 'cancel' },
+                {
+                    text: 'حذف',
+                    style: 'destructive',
+                    onPress: async () => {
+                        const { error: deleteError } = await supabase.from('stock_movements').delete().eq('id', item.id);
+                        if (deleteError) {
+                            Alert.alert('خطأ', deleteError.message);
+                        } else {
+                            refetch();
+                        }
+                    },
+                },
+            ]
+        );
+    };
 
     if (loading) return <SafeAreaView className="flex-1 items-center justify-center">
         <LottieView
@@ -89,16 +111,26 @@ export default function HistoryScreen() {
                     </View>
                 }
                 renderItem={({ item }) => (
-                    <View className="bg-white px-4 py-3 rounded-xl border border-slate-200">
-                        <Text className="text-lg  font-medium text-right">
-                            {item.stock_batches?.products?.name ?? 'دواء غير معروف'}
-                        </Text>
-                        <Text className="text-slate-700 text-md text-right">
-                            {item.from_warehouse?.name ?? 'N/A'} ← {item.to_warehouse?.name ?? 'N/A'} · {item.quantity} دواء · {new Date(item.created_at).toLocaleDateString('ar')}
-                        </Text>
-                        {item.note && (
-                            <Text className="text-slate-700 text-sm text-right mt-1">{item.note}</Text>
-                        )}
+                    <View className="bg-white px-4 py-3 rounded-xl border border-slate-200 flex-row items-center justify-between">
+                        <Pressable
+                            onPress={() => handleDeleteHistoryItem(item)}
+                            hitSlop={10}
+                            className="p-2"
+                        >
+                            <Trash2 size={20} color="#dc2626" />
+                        </Pressable>
+                        <View className="flex-1">
+                            <Text className="text-lg font-medium text-right">
+                                {item.stock_batches?.products?.name ?? 'دواء غير معروف'}
+                            </Text>
+                            <Text className="text-slate-700 text-md text-right">
+                                {item.from_warehouse?.name ?? 'N/A'} ← {item.to_warehouse?.name ?? 'N/A'} · {item.quantity} دواء · {new Date(item.created_at).toLocaleDateString('ar')}
+                            </Text>
+                            {item.note && (
+                                <Text className="text-slate-700 text-sm text-right mt-1">{item.note}</Text>
+                            )}
+                        </View>
+
                     </View>
                 )}
             />
