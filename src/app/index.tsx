@@ -118,7 +118,7 @@ export default function Home() {
   return (
     <SafeAreaView className="flex-1 bg-indigo-50">
       <FlatList
-        data={isSearching ? searchResults : historyItems}
+        data={isSearching ? searchResults : historyItems.slice(0,3)}
         keyExtractor={(item) => item.id}
         contentContainerClassName="p-4 gap-4"
         refreshing={refreshing}

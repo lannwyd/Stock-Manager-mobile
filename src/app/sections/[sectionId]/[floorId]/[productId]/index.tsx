@@ -240,8 +240,8 @@ export default function ProductDetail() {
                             </View>
 
                         </View>
-                        <View className="flex-col justify-center items-center flex-1 border-l  border-slate-300 pt-4 ">
-                            <Text className="text-slate-600 text-xl text-left">الكمية</Text>
+                        <View className="flex-col justify-center items-center flex-1 border-l  border-slate-300 ">
+                            <Text className="w-[30%] text-slate-600 text-xl text-center ">الكمية</Text>
                             <Text className="text-5xl font-bold text-indigo-700 text-left">{batch.quantity}</Text>
                         </View>
                     </View>
