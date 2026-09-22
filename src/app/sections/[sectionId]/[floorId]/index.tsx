@@ -7,6 +7,11 @@ import { useCallback, useMemo, useState } from 'react';
 import { Alert, FlatList, Modal, Pressable, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+function formatMonthYear(isoDate: string) {
+  const [year, month] = isoDate.split('-');
+  return `${month}/${year}`;
+}
+
 export default function FloorDetail() {
 
   const router = useRouter();
@@ -29,7 +34,8 @@ export default function FloorDetail() {
   const [newName, setNewName] = useState('');
   const [newDci, setNewDci] = useState('');
   const [newLot, setNewLot] = useState('');
-  const [newExpiry, setNewExpiry] = useState('');
+  const [newExpiryMonth, setNewExpiryMonth] = useState('');
+  const [newExpiryYear, setNewExpiryYear] = useState('');
   const [newQuantity, setNewQuantity] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -79,7 +85,8 @@ export default function FloorDetail() {
     setNewName('');
     setNewDci('');
     setNewLot('');
-    setNewExpiry('');
+    setNewExpiryMonth('');
+    setNewExpiryYear('');
     setNewQuantity('');
   };
 
@@ -89,10 +96,19 @@ export default function FloorDetail() {
   };
 
   const handleAddition = async () => {
-    if (!newName.trim() || !newDci.trim() || !newLot.trim() || !newExpiry.trim()) {
-      Alert.alert('معلومات ناقصة', 'يرجى إدخال الاسم، الـ DCI، رقم اللوت، وتاريخ الانتهاء.');
+    if (!newName.trim() || !newDci.trim() || !newLot.trim()) {
+      Alert.alert('معلومات ناقصة', 'يرجى إدخال الاسم، الـ DCI، ورقم اللوت.');
       return;
     }
+
+    const month = newExpiryMonth.padStart(2, '0');
+    const year = newExpiryYear;
+    if (!/^\d{2}$/.test(month) || !/^\d{4}$/.test(year)) {
+      Alert.alert('تاريخ غير صالح', 'يرجى إدخال شهر وسنة صحيحين.');
+      return;
+    }
+    const expiryDate = `${year}-${month}-01`;
+
     const qty = parseInt(newQuantity, 10);
     if (isNaN(qty) || qty <= 0) {
       Alert.alert('كمية غير صالحة', 'أدخل كمية أكبر من 0.');
@@ -130,7 +146,7 @@ export default function FloorDetail() {
       product_id: productId,
       floor_id: floorId,
       lot: newLot.trim(),
-      expiry_date: newExpiry.trim(),
+      expiry_date: expiryDate,
       quantity: qty,
     });
 
@@ -147,11 +163,11 @@ export default function FloorDetail() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-indigo-50 p-4">
+    <SafeAreaView className="flex-1 bg-indigo-50 relative">
       <FlatList
         data={filteredBatches}
         keyExtractor={(item) => item.id}
-        contentContainerClassName="gap-4"
+        contentContainerClassName="gap-4 p-4"
         refreshing={refreshing}
         onRefresh={onRefresh}
         ListHeaderComponent={
@@ -181,7 +197,7 @@ export default function FloorDetail() {
               )}
             </View>
 
-            <View className="flex-row gap-4">
+            <View className=" flex-row gap-4">
               <View className="flex-1 bg-white rounded-xl border border-slate-200 p-4">
                 <Package size={20} color="#4338ca" />
                 <Text className="text-2xl font-bold mt-2 text-left">{totalItems}</Text>
@@ -208,6 +224,7 @@ export default function FloorDetail() {
               <View>
                 <Text className="text-base font-medium text-left">{item.products?.name}</Text>
                 <Text className="text-sm text-slate-500 text-left">{item.products?.dci}</Text>
+                <Text className="text-xs text-slate-400 text-left mt-0.5">{formatMonthYear(item.expiry_date)}</Text>
               </View>
               <View className="flex w-[50%] justify-end h-full flex-row items-center gap-4">
                 <Text className="flex-1 text-right text-slate-800">{item.quantity}   علبة</Text>
@@ -217,13 +234,15 @@ export default function FloorDetail() {
           </Link>
         )}
       />
-
-      <TouchableHighlight
-        onPress={openAddModal}
-        className="w-full flex flex-col justify-center items-center bg-indigo-500 h-20 rounded-md"
-      >
-        <Plus size={36} color="#FFFFFF" />
-      </TouchableHighlight>
+      <View className="absolute bottom-10 right-8 z-10">
+        <TouchableHighlight
+          onPress={openAddModal}
+          className="flex flex-col h-20 w-20 justify-center items-center bg-indigo-500 rounded-full shadow-lg"
+        >
+          <Plus size={32} color="#FFFFFF" />
+        </TouchableHighlight>
+      </View>
+      
 
       <Modal visible={addVisible} animationType="slide" transparent onRequestClose={() => setAddVisible(false)}>
         <View className="flex-1 justify-end bg-black/40">
@@ -284,18 +303,38 @@ export default function FloorDetail() {
             </View>
 
             <View className="gap-1">
-              <Text className="text-slate-700 text-md text-left">تاريخ الانتهاء (YYYY-MM-DD)</Text>
-              <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
-                <TextInput
-                  className="flex-1 py-2 text-base text-right"
-                  value={newExpiry}
-                  onChangeText={setNewExpiry}
-                />
-                {newExpiry.length > 0 && (
-                  <Pressable onPress={() => setNewExpiry('')} hitSlop={10} className="p-1">
-                    <X size={18} color="#64748b" />
-                  </Pressable>
-                )}
+              <Text className="text-slate-700 text-md text-left">تاريخ الانتهاء (شهر/سنة)</Text>
+              <View className="flex-row gap-2">
+                <View className="flex-1 flex-row items-center border border-slate-300 rounded-lg px-3">
+                  <TextInput
+                    className="flex-1 py-2 text-base text-center"
+                    keyboardType="numeric"
+                    maxLength={2}
+                    placeholder="شهر"
+                    value={newExpiryMonth}
+                    onChangeText={setNewExpiryMonth}
+                  />
+                  {newExpiryMonth.length > 0 && (
+                    <Pressable onPress={() => setNewExpiryMonth('')} hitSlop={10} className="p-1">
+                      <X size={18} color="#64748b" />
+                    </Pressable>
+                  )}
+                </View>
+                <View className="flex-1 flex-row items-center border border-slate-300 rounded-lg px-3">
+                  <TextInput
+                    className="flex-1 py-2 text-base text-center"
+                    keyboardType="numeric"
+                    maxLength={4}
+                    placeholder="سنة"
+                    value={newExpiryYear}
+                    onChangeText={setNewExpiryYear}
+                  />
+                  {newExpiryYear.length > 0 && (
+                    <Pressable onPress={() => setNewExpiryYear('')} hitSlop={10} className="p-1">
+                      <X size={18} color="#64748b" />
+                    </Pressable>
+                  )}
+                </View>
               </View>
             </View>
 

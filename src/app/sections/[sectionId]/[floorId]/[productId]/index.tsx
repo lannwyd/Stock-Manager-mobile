@@ -21,8 +21,8 @@ export default function ProductDetail() {
     const [editDci, setEditDci] = useState('');
     const [editQuantity, setEditQuantity] = useState('');
     const [editLot, setEditLot] = useState('');
-    const [editExpiry, setEditExpiry] = useState('');
-
+    const [editExpiryMonth, setEditExpiryMonth] = useState('');
+    const [editExpiryYear, setEditExpiryYear] = useState('');
     const [transferQuantity, setTransferQuantity] = useState('');
     const [transferNote, setTransferNote] = useState('');
     const [transferTargetWarehouseId, setTransferTargetWarehouseId] = useState<string | null>(null);
@@ -63,6 +63,11 @@ export default function ProductDetail() {
         );
     }
 
+    function formatMonthYear(isoDate: string) {
+        const [year, month] = isoDate.split('-');
+        return `${month}/${year}`;
+    }
+
     let location: { warehouseName: string; sectionName: string; floorName: string } | null = null;
     for (const warehouse of warehouses) {
         for (const section of warehouse.sections ?? []) {
@@ -101,15 +106,24 @@ export default function ProductDetail() {
         setEditDci(batch.products?.dci ?? '');
         setEditQuantity(String(batch.quantity));
         setEditLot(batch.lot);
-        setEditExpiry(batch.expiry_date);
+        const [year, month] = batch.expiry_date.split('-');
+        setEditExpiryMonth(month);
+        setEditExpiryYear(year);
         setEditVisible(true);
     };
-
     const handleSaveEdit = async () => {
         if (!editName.trim() || !editDci.trim()) {
             Alert.alert('معلومات ناقصة', 'يرجى إدخال اسم الدواء والـ DCI.');
             return;
         }
+
+        const month = editExpiryMonth.padStart(2, '0');
+        const year = editExpiryYear;
+        if (!/^\d{2}$/.test(month) || !/^\d{4}$/.test(year)) {
+            Alert.alert('تاريخ غير صالح', 'يرجى إدخال شهر وسنة صحيحين.');
+            return;
+        }
+        const reconstructedExpiry = `${year}-${month}-01`;
 
         setSubmitting(true);
 
@@ -131,7 +145,7 @@ export default function ProductDetail() {
             .update({
                 quantity: parseInt(editQuantity, 10) || 0,
                 lot: editLot,
-                expiry_date: editExpiry,
+                expiry_date: reconstructedExpiry,
             })
             .eq('id', batch.id);
         setSubmitting(false);
@@ -235,7 +249,7 @@ export default function ProductDetail() {
                                 <Calendar size={18} color="#4338ca" />
                                 <View>
                                     <Text className="text-slate-800 text-sm text-left">تاريخ نهاية الصلاحية </Text>
-                                    <Text className="text-base text-slate-800 text-left">{batch.expiry_date}</Text>
+                                    <Text className="text-base text-slate-800 text-left">{formatMonthYear(batch.expiry_date)}</Text>
                                 </View>
                             </View>
 
@@ -350,18 +364,38 @@ export default function ProductDetail() {
                         </View>
 
                         <View className="gap-1">
-                            <Text className="text-slate-700 text-md text-left">تاريخ نهاية الصلاحية (YYYY-MM-DD)</Text>
-                            <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
-                                <TextInput
-                                    className="flex-1 py-2 text-base text-right"
-                                    value={editExpiry}
-                                    onChangeText={setEditExpiry}
-                                />
-                                {editExpiry.length > 0 && (
-                                    <Pressable onPress={() => setEditExpiry('')} hitSlop={10} className="p-1">
-                                        <X size={18} color="#64748b" />
-                                    </Pressable>
-                                )}
+                            <Text className="text-slate-700 text-md text-left">تاريخ نهاية الصلاحية (شهر/سنة)</Text>
+                            <View className="flex-row gap-2">
+                                <View className="flex-1 flex-row items-center border border-slate-300 rounded-lg px-3">
+                                    <TextInput
+                                        className="flex-1 py-2 text-base text-center"
+                                        keyboardType="numeric"
+                                        maxLength={2}
+                                        placeholder="شهر"
+                                        value={editExpiryMonth}
+                                        onChangeText={setEditExpiryMonth}
+                                    />
+                                    {editExpiryMonth.length > 0 && (
+                                        <Pressable onPress={() => setEditExpiryMonth('')} hitSlop={10} className="p-1">
+                                            <X size={18} color="#64748b" />
+                                        </Pressable>
+                                    )}
+                                </View>
+                                <View className="flex-1 flex-row items-center border border-slate-300 rounded-lg px-3">
+                                    <TextInput
+                                        className="flex-1 py-2 text-base text-center"
+                                        keyboardType="numeric"
+                                        maxLength={4}
+                                        placeholder="سنة"
+                                        value={editExpiryYear}
+                                        onChangeText={setEditExpiryYear}
+                                    />
+                                    {editExpiryYear.length > 0 && (
+                                        <Pressable onPress={() => setEditExpiryYear('')} hitSlop={10} className="p-1">
+                                            <X size={18} color="#64748b" />
+                                        </Pressable>
+                                    )}
+                                </View>
                             </View>
                         </View>
 
