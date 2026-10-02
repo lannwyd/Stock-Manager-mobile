@@ -4,7 +4,7 @@ import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import LottieView from 'lottie-react-native';
 import { ChevronLeft, Layers, Package, Pencil, Plus, Trash2, X } from 'lucide-react-native';
 import { useCallback, useState } from 'react';
-import { Alert, FlatList, Modal, Pressable, Text, TextInput, TouchableHighlight, View } from 'react-native';
+import { Alert, FlatList, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SectionDetail() {
@@ -223,76 +223,84 @@ export default function SectionDetail() {
 
       <Modal visible={addVisible} animationType="slide" transparent onRequestClose={() => setAddVisible(false)}>
         <View className="flex-1 justify-end bg-black/40">
-          <View className="bg-white rounded-t-2xl p-5 gap-4">
-            <View className="flex-row items-center justify-between">
-              <Text className="text-lg font-bold">طابق جديد</Text>
-              <Pressable onPress={() => setAddVisible(false)}>
-                <X size={22} color="#64748b" />
-              </Pressable>
-            </View>
-
-            <View className="gap-1">
-              <Text className="text-slate-700 text-md text-left">اسم الطابق</Text>
-              <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
-                <TextInput
-                  className="flex-1 py-2 text-base text-right"
-                  value={newName}
-                  onChangeText={setNewName}
-                  placeholder="الطابق 4"
-                />
-                {newName.length > 0 && (
-                  <Pressable onPress={() => setNewName('')} hitSlop={10} className="p-1">
-                    <X size={18} color="#64748b" />
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+            <ScrollView keyboardShouldPersistTaps="handled" className="bg-white rounded-t-2xl">
+              <View className="p-5 gap-4">
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-lg font-bold">طابق جديد</Text>
+                  <Pressable onPress={() => setAddVisible(false)}>
+                    <X size={22} color="#64748b" />
                   </Pressable>
-                )}
-              </View>
-            </View>
+                </View>
 
-            <Pressable
-              onPress={handleAddFloor}
-              disabled={submitting}
-              className="bg-indigo-700 rounded-xl py-3 items-center mt-2"
-            >
-              <Text className="text-white font-semibold">{submitting ? 'جارٍ الإضافة...' : 'إضافة طابق'}</Text>
-            </Pressable>
-          </View>
+                <View className="gap-1">
+                  <Text className="text-slate-700 text-md text-left">اسم الطابق</Text>
+                  <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                    <TextInput
+                      className="flex-1 py-2 text-base text-right"
+                      value={newName}
+                      onChangeText={setNewName}
+                      placeholder="الطابق 4"
+                    />
+                    {newName.length > 0 && (
+                      <Pressable onPress={() => setNewName('')} hitSlop={10} className="p-1">
+                        <X size={18} color="#64748b" />
+                      </Pressable>
+                    )}
+                  </View>
+                </View>
+
+                <Pressable
+                  onPress={handleAddFloor}
+                  disabled={submitting}
+                  className="bg-indigo-700 rounded-xl py-3 items-center mt-2"
+                >
+                  <Text className="text-white font-semibold">{submitting ? 'جارٍ الإضافة...' : 'إضافة طابق'}</Text>
+                </Pressable>
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
         </View>
       </Modal>
 
       <Modal visible={editVisible} animationType="slide" transparent onRequestClose={() => setEditVisible(false)}>
         <View className="flex-1 justify-end bg-black/40">
-          <View className="bg-white rounded-t-2xl p-5 gap-4">
-            <View className="flex-row items-center justify-between">
-              <Text className="text-lg font-bold">تعديل الطابق</Text>
-              <Pressable onPress={() => setEditVisible(false)}>
-                <X size={22} color="#64748b" />
-              </Pressable>
-            </View>
-
-            <View className="gap-1">
-              <Text className="text-slate-700 text-md text-left">اسم الطابق</Text>
-              <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
-                <TextInput
-                  className="flex-1 py-2 text-base text-right"
-                  value={editName}
-                  onChangeText={setEditName}
-                />
-                {editName.length > 0 && (
-                  <Pressable onPress={() => setEditName('')} hitSlop={10} className="p-1">
-                    <X size={18} color="#64748b" />
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+            <ScrollView keyboardShouldPersistTaps="handled" className="bg-white rounded-t-2xl">
+              <View className="p-5 gap-4">
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-lg font-bold">تعديل الطابق</Text>
+                  <Pressable onPress={() => setEditVisible(false)}>
+                    <X size={22} color="#64748b" />
                   </Pressable>
-                )}
-              </View>
-            </View>
+                </View>
 
-            <Pressable
-              onPress={handleSaveEdit}
-              disabled={submitting}
-              className="bg-indigo-700 rounded-xl py-3 items-center mt-2"
-            >
-              <Text className="text-white font-semibold">{submitting ? 'جارٍ الحفظ...' : 'حفظ التغييرات'}</Text>
-            </Pressable>
-          </View>
+                <View className="gap-1">
+                  <Text className="text-slate-700 text-md text-left">اسم الطابق</Text>
+                  <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                    <TextInput
+                      className="flex-1 py-2 text-base text-right"
+                      value={editName}
+                      onChangeText={setEditName}
+                    />
+                    {editName.length > 0 && (
+                      <Pressable onPress={() => setEditName('')} hitSlop={10} className="p-1">
+                        <X size={18} color="#64748b" />
+                      </Pressable>
+                    )}
+                  </View>
+                </View>
+
+                <Pressable
+                  onPress={handleSaveEdit}
+                  disabled={submitting}
+                  className="bg-indigo-700 rounded-xl py-3 items-center mt-2"
+                >
+                  <Text className="text-white font-semibold">{submitting ? 'جارٍ الحفظ...' : 'حفظ التغييرات'}</Text>
+                </Pressable>
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
         </View>
       </Modal>
     </SafeAreaView>

@@ -4,7 +4,7 @@ import { Link, useLocalSearchParams, useRouter } from 'expo-router';
 import LottieView from 'lottie-react-native';
 import { ChevronLeft, Layers, Package, Plus, Search, X } from 'lucide-react-native';
 import { useCallback, useMemo, useState } from 'react';
-import { Alert, FlatList, Modal, Pressable, Text, TextInput, TouchableHighlight, View } from 'react-native';
+import { Alert, FlatList, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, TouchableHighlight, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 function formatMonthYear(isoDate: string) {
@@ -221,12 +221,12 @@ export default function FloorDetail() {
         renderItem={({ item }) => (
           <Link href={`/sections/${sectionId}/${floorId}/${item.id}`} asChild>
             <Pressable className="flex-row items-center justify-between bg-white rounded-xl border border-slate-200 px-4 py-4">
-              <View>
+              <View className={"w-[70%]"}>
                 <Text className="text-base font-medium text-left">{item.products?.name}</Text>
                 <Text className="text-sm text-slate-500 text-left">{item.products?.dci}</Text>
-                <Text className="text-xs text-slate-400 text-left mt-0.5">{formatMonthYear(item.expiry_date)}</Text>
+                <Text className="text-xs text-slate-700 text-left mt-0.5">{formatMonthYear(item.expiry_date)}</Text>
               </View>
-              <View className="flex w-[50%] justify-end h-full flex-row items-center gap-4">
+              <View className="flex w-[30%] justify-end h-full flex-row items-center gap-4">
                 <Text className="flex-1 text-right text-slate-800">{item.quantity}   علبة</Text>
                 <ChevronLeft size={32} color="#4338ca" />
               </View>
@@ -242,127 +242,130 @@ export default function FloorDetail() {
           <Plus size={32} color="#FFFFFF" />
         </TouchableHighlight>
       </View>
-      
 
       <Modal visible={addVisible} animationType="slide" transparent onRequestClose={() => setAddVisible(false)}>
         <View className="flex-1 justify-end bg-black/40">
-          <View className="bg-white rounded-t-2xl p-5 gap-4">
-            <View className="flex-row items-center justify-between">
-              <Text className="text-lg font-bold">إضافة دواء إلى {floor.name}</Text>
-              <Pressable onPress={() => setAddVisible(false)}>
-                <X size={22} color="#64748b" />
-              </Pressable>
-            </View>
-
-            <View className="gap-1">
-              <Text className="text-slate-700 text-md text-left">اسم الدواء</Text>
-              <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
-                <TextInput
-                  className="flex-1 py-2 text-base text-right"
-                  value={newName}
-                  onChangeText={setNewName}
-                />
-                {newName.length > 0 && (
-                  <Pressable onPress={() => setNewName('')} hitSlop={10} className="p-1">
-                    <X size={18} color="#64748b" />
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+            <ScrollView keyboardShouldPersistTaps="handled" className="bg-white rounded-t-2xl">
+              <View className="p-5 gap-4">
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-lg font-bold">إضافة دواء إلى {floor.name}</Text>
+                  <Pressable onPress={() => setAddVisible(false)}>
+                    <X size={22} color="#64748b" />
                   </Pressable>
-                )}
-              </View>
-            </View>
-
-            <View className="gap-1">
-              <Text className="text-slate-700 text-md text-left">DCI</Text>
-              <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
-                <TextInput
-                  className="flex-1 py-2 text-base text-right"
-                  value={newDci}
-                  onChangeText={setNewDci}
-                />
-                {newDci.length > 0 && (
-                  <Pressable onPress={() => setNewDci('')} hitSlop={10} className="p-1">
-                    <X size={18} color="#64748b" />
-                  </Pressable>
-                )}
-              </View>
-            </View>
-
-            <View className="gap-1">
-              <Text className="text-slate-700 text-md text-left">LOT</Text>
-              <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
-                <TextInput
-                  className="flex-1 py-2 text-base text-right"
-                  value={newLot}
-                  onChangeText={setNewLot}
-                />
-                {newLot.length > 0 && (
-                  <Pressable onPress={() => setNewLot('')} hitSlop={10} className="p-1">
-                    <X size={18} color="#64748b" />
-                  </Pressable>
-                )}
-              </View>
-            </View>
-
-            <View className="gap-1">
-              <Text className="text-slate-700 text-md text-left">تاريخ الانتهاء (شهر/سنة)</Text>
-              <View className="flex-row gap-2">
-                <View className="flex-1 flex-row items-center border border-slate-300 rounded-lg px-3">
-                  <TextInput
-                    className="flex-1 py-2 text-base text-center"
-                    keyboardType="numeric"
-                    maxLength={2}
-                    placeholder="شهر"
-                    value={newExpiryMonth}
-                    onChangeText={setNewExpiryMonth}
-                  />
-                  {newExpiryMonth.length > 0 && (
-                    <Pressable onPress={() => setNewExpiryMonth('')} hitSlop={10} className="p-1">
-                      <X size={18} color="#64748b" />
-                    </Pressable>
-                  )}
                 </View>
-                <View className="flex-1 flex-row items-center border border-slate-300 rounded-lg px-3">
-                  <TextInput
-                    className="flex-1 py-2 text-base text-center"
-                    keyboardType="numeric"
-                    maxLength={4}
-                    placeholder="سنة"
-                    value={newExpiryYear}
-                    onChangeText={setNewExpiryYear}
-                  />
-                  {newExpiryYear.length > 0 && (
-                    <Pressable onPress={() => setNewExpiryYear('')} hitSlop={10} className="p-1">
-                      <X size={18} color="#64748b" />
-                    </Pressable>
-                  )}
+
+                <View className="gap-1">
+                  <Text className="text-slate-700 text-md text-left">اسم الدواء</Text>
+                  <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                    <TextInput
+                      className="flex-1 py-2 text-base text-right"
+                      value={newName}
+                      onChangeText={setNewName}
+                    />
+                    {newName.length > 0 && (
+                      <Pressable onPress={() => setNewName('')} hitSlop={10} className="p-1">
+                        <X size={18} color="#64748b" />
+                      </Pressable>
+                    )}
+                  </View>
                 </View>
-              </View>
-            </View>
 
-            <View className="gap-1">
-              <Text className="text-slate-700 text-md text-left">الكمية</Text>
-              <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
-                <TextInput
-                  className="flex-1 py-2 text-base text-right"
-                  keyboardType="numeric"
-                  value={newQuantity}
-                  onChangeText={setNewQuantity}
-                />
-                {newQuantity.length > 0 && (
-                  <Pressable onPress={() => setNewQuantity('')} hitSlop={10} className="p-1">
-                    <X size={18} color="#64748b" />
-                  </Pressable>
-                )}
-              </View>
-            </View>
+                <View className="gap-1">
+                  <Text className="text-slate-700 text-md text-left">DCI</Text>
+                  <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                    <TextInput
+                      className="flex-1 py-2 text-base text-right"
+                      value={newDci}
+                      onChangeText={setNewDci}
+                    />
+                    {newDci.length > 0 && (
+                      <Pressable onPress={() => setNewDci('')} hitSlop={10} className="p-1">
+                        <X size={18} color="#64748b" />
+                      </Pressable>
+                    )}
+                  </View>
+                </View>
 
-            <Pressable
-              onPress={handleAddition}
-              disabled={submitting}
-              className="bg-indigo-700 rounded-xl py-3 items-center mt-2"
-            >
-              <Text className="text-white font-semibold">{submitting ? 'جارٍ الإضافة...' : 'إضافة دواء'}</Text>
-            </Pressable>
-          </View>
+                <View className="gap-1">
+                  <Text className="text-slate-700 text-md text-left">LOT</Text>
+                  <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                    <TextInput
+                      className="flex-1 py-2 text-base text-right"
+                      value={newLot}
+                      onChangeText={setNewLot}
+                    />
+                    {newLot.length > 0 && (
+                      <Pressable onPress={() => setNewLot('')} hitSlop={10} className="p-1">
+                        <X size={18} color="#64748b" />
+                      </Pressable>
+                    )}
+                  </View>
+                </View>
+
+                <View className="gap-1">
+                  <Text className="text-slate-700 text-md text-left">تاريخ الانتهاء (شهر/سنة)</Text>
+                  <View className="flex-row gap-2">
+                    <View className="flex-1 flex-row items-center border border-slate-300 rounded-lg px-3">
+                      <TextInput
+                        className="flex-1 py-2 text-base text-center"
+                        keyboardType="numeric"
+                        maxLength={2}
+                        placeholder="شهر"
+                        value={newExpiryMonth}
+                        onChangeText={setNewExpiryMonth}
+                      />
+                      {newExpiryMonth.length > 0 && (
+                        <Pressable onPress={() => setNewExpiryMonth('')} hitSlop={10} className="p-1">
+                          <X size={18} color="#64748b" />
+                        </Pressable>
+                      )}
+                    </View>
+                    <View className="flex-1 flex-row items-center border border-slate-300 rounded-lg px-3">
+                      <TextInput
+                        className="flex-1 py-2 text-base text-center"
+                        keyboardType="numeric"
+                        maxLength={4}
+                        placeholder="سنة"
+                        value={newExpiryYear}
+                        onChangeText={setNewExpiryYear}
+                      />
+                      {newExpiryYear.length > 0 && (
+                        <Pressable onPress={() => setNewExpiryYear('')} hitSlop={10} className="p-1">
+                          <X size={18} color="#64748b" />
+                        </Pressable>
+                      )}
+                    </View>
+                  </View>
+                </View>
+
+                <View className="gap-1">
+                  <Text className="text-slate-700 text-md text-left">الكمية</Text>
+                  <View className="flex-row items-center border border-slate-300 rounded-lg px-3">
+                    <TextInput
+                      className="flex-1 py-2 text-base text-right"
+                      keyboardType="numeric"
+                      value={newQuantity}
+                      onChangeText={setNewQuantity}
+                    />
+                    {newQuantity.length > 0 && (
+                      <Pressable onPress={() => setNewQuantity('')} hitSlop={10} className="p-1">
+                        <X size={18} color="#64748b" />
+                      </Pressable>
+                    )}
+                  </View>
+                </View>
+
+                <Pressable
+                  onPress={handleAddition}
+                  disabled={submitting}
+                  className="bg-indigo-700 rounded-xl py-3 items-center mt-2"
+                >
+                  <Text className="text-white font-semibold">{submitting ? 'جارٍ الإضافة...' : 'إضافة دواء'}</Text>
+                </Pressable>
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
         </View>
       </Modal>
     </SafeAreaView>

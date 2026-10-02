@@ -53,13 +53,13 @@ export default function Home() {
       <Link href={`/sections/${item.sectionId}/${item.floorId}/${item.id}`} asChild>
         
         <Pressable className=" flex-row items-center justify-between bg-white rounded-xl border border-slate-200 p-4 ">
-          <View className="flex flex-row  w-[40%] items-center gap-2">
+          <View className="flex flex-row  w-[30%] items-center gap-2">
             <ChevronRight size={20} color="#4338ca" />
             <Text className="flex-1 text-slate-600 text-left">{item.quantity} دواء</Text>
           </View>
-          <View className={"w-[60%] gap-1.5"}>
+          <View className={"w-[70%] gap-1.5"}>
             <View className={"w-full flex flex-row items-center justify-between"}>
-              <View className={"w-[45%] p-2 bg-indigo-50 rounded-lg"}>
+              <View className={"w-[50%] p-2 bg-indigo-50 rounded-lg"}>
                 <Text className="w-full text-sm text-center  text-indigo-600 ">{item.products?.dci}</Text>
               </View>
               <Text className="w-[45%] text-md font-medium text-right">{item.products?.name}</Text>
@@ -69,7 +69,7 @@ export default function Home() {
               {section && floor && (
                 <View className={"flex flex-row items-center justify-center p-1.5 gap-2 rounded-lg"}>
 
-                  <Text className=" w-full text-sm text-indigo-600 text-left ">{warehouseName} · {section.name} · {floor.name}</Text>
+                  <Text className=" w-full text-sm text-indigo-600 text-right ">{warehouseName} · {section.name} · {floor.name}</Text>
                   <MapPin size={14} color="#4338ca" />
 
                 </View>
@@ -256,7 +256,7 @@ export default function Home() {
                   {item.stock_batches?.products?.name ?? 'دواء غير معروف'}
                 </Text>
                 <Text className=" text-sm text-right">
-                  {item.from_warehouse?.name ?? 'N/A'} ← {item.to_warehouse?.name ?? 'N/A'} · {new Date(item.created_at).toLocaleDateString()}
+                    {item.to_warehouse?.name ?? 'N/A'} ← {item.from_warehouse?.name ?? 'N/A'} · {new Date(item.created_at).toLocaleDateString()}
                 </Text>
               </View>
 

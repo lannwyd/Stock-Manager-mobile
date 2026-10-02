@@ -124,7 +124,7 @@ export default function HistoryScreen() {
                                 {item.stock_batches?.products?.name ?? 'دواء غير معروف'}
                             </Text>
                             <Text className="text-slate-700 text-md text-right">
-                                {item.from_warehouse?.name ?? 'N/A'} ← {item.to_warehouse?.name ?? 'N/A'} · {item.quantity} دواء · {new Date(item.created_at).toLocaleDateString('ar')}
+                                {item.to_warehouse?.name ?? 'N/A'}← {item.from_warehouse?.name ?? 'N/A'} · {item.quantity} دواء · {new Date(item.created_at).toLocaleDateString('ar')}
                             </Text>
                             {item.note && (
                                 <Text className="text-slate-700 text-sm text-right mt-1">{item.note}</Text>
